@@ -2,7 +2,7 @@ from util.data_stream import DataStream
 
 
 class CLR1:
-    "A class repersenting color data in the CLR1 block"
+    "A class representing a CLR1, color RGBA data block"
 
     def __init__(self, data: DataStream = None):
         self.colors = []
@@ -23,6 +23,6 @@ class CLR1:
 
         # Seek to the end of the section
         data.read_bytes(4)
-        return Data
+        return data
 
 
