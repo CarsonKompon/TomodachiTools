@@ -46,5 +46,6 @@ class CLB1:
 
          # Seek to the end of the section
         data.read_bytes(8)
+        return data
 
        
