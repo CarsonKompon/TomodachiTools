@@ -24,4 +24,4 @@ class CLR1:
         # Seek to the end of the section
         data.read_bytes(4)
 
-        print(data.tell())
+
