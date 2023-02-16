@@ -64,10 +64,10 @@ class Msbp:
                 match magic:
                     case "CLR1":
                         self.clr1 = CLR1()
-                        self.clr1.read(data)
+                        data = self.clr1.read(data)
                     case "CLB1":
                         self.clb1 = CLB1()
-                        self.clb1.read(data)
+                        data = self.clb1.read(data)
                     case "TAG2":
                         pass
                     case "TGG2":
