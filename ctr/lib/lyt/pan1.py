@@ -54,7 +54,7 @@ class Pan1(LayoutBase):
         """Reads the PAN1 section from a data stream"""
 
         # Store the start offset of the section
-        startPos = data.tell()
+        startPos = data.tell() - 4
 
         # Read in the section size as a 32-bit unsigned integer
         self.sectionSize = data.read_uint32()

@@ -55,4 +55,12 @@ class Txl1:
     def image_exists(self, name: str) -> bool:
         """Returns true if the image exists in the TXL1"""
         return name in self.strings
+    
+    def __str__(self) -> str:
+        string = "{"
+        string += f"sectionSize: {self.sectionSize}, "
+        string += f"textureCount: {self.textureCount}, "
+        string += f"strings: {self.strings}"
+        string += "}"
+        return string
 

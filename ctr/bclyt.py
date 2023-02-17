@@ -154,7 +154,8 @@ class Bclyt(LayoutBase):
                         
                         layoutPrevious = txt
                     # TODO: Add usd1, wnd1, pas1, pae1, pts1, grp1, grs1, and gre1 support
-
+                    case _:
+                        print("Unknown section magic '" + str(magic) + "' at offset " + str(data.tell() - 4) + "!")
 
             print(str(self))
 

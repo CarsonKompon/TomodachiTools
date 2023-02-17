@@ -35,6 +35,9 @@ class Lyt1:
     def read(self, data: DataStream) -> DataStream:
         """Reads the LYT1 section from a data stream"""
 
+        # Save the start position
+        startPos = data.tell() - 4
+
         # Read the first 4 bytes to get the section size
         self.sectionSize = data.read_uint32()
 
@@ -43,6 +46,9 @@ class Lyt1:
 
         # Read the next 8 bytes to get the x and y floats for the canvas size
         self.canvasSize = data.read_vector2()
+
+        # Seek to the end of the section
+        data.seek(startPos + self.sectionSize)
 
         return data
     
