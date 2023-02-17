@@ -13,5 +13,4 @@ class ALB1:
     def read(self):
         """Reads the ALB1 section from a data stream"""
         self.entries = self.alb1Block.read()
-         # Seek to the end of the section
         return self.data
