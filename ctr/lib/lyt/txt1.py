@@ -49,8 +49,8 @@ class Txt1(Pan1):
 
     unknown: bytes = None
     textOffset: int = None
-    topColor: tuple(int, int, int, int) = None
-    bottomColor: tuple(int, int, int, int) = None
+    topColor: tuple[int, int, int, int] = None
+    bottomColor: tuple[int, int, int, int] = None
     sizeX: float = None
     sizeY: float = None
     characterSize: float = None

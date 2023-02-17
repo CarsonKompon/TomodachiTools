@@ -1,6 +1,7 @@
 import sys
 
 from ctr.bclyt import Bclyt
+from ctr.msbp import Msbp
 
 # Get arguments from command line
 args = sys.argv[1:]

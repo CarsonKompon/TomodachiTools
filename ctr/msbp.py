@@ -8,9 +8,11 @@ class Msbp:
     "A class to repersent a Message Studio Binary Project file"
 
     def __init__(self, filepath: str = None):
-        self.filepath = filepath
+        if filepath is not None:
+            self.parse(filepath)
 
-    def parse(self) -> None:
+    def parse(self, filepath: str):
+        self.filepath = filepath
         with open(self.filepath, "rb") as d:
             # Parsing the header
             data = DataStream(d)

@@ -35,12 +35,12 @@ class Bclyt(LayoutBase):
     userDataEntries = None
 
     def __init__(self, filepath: str = None):
-        self.filepath = filepath
-
         if filepath is not None:
             self.parse(filepath)
 
     def parse(self, filepath: str):
+        self.filepath = filepath
+        
         # Read the BCLYT file
         with open(filepath, 'rb') as d:
 
