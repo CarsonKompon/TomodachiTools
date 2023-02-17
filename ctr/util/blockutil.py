@@ -1,8 +1,9 @@
 from util.data_stream import DataStream
 
+
 class block:
     # TODO: Support data parsing
-    "A class representing a block in a MSBP file"
+    "A class representing block parsing for the LMS library"
     def __init__(self, data: DataStream):
         self.data = data
         self.entries: dict
@@ -20,7 +21,7 @@ class block:
         
         self.entries = self.readLabelBlock(relativeStart, self.numberOfHashEntries, overSeeking=overSeeking)
 
-        self.seekToEndOfSection(self.data)
+        data = self.seekToEndOfSection(self.data)
         
         return self.entries
 
@@ -31,11 +32,12 @@ class block:
             self.data.read_bytes(4)
         return hashOffsets
     
-    def seekToEndOfSection(self, data: DataStream):
+    def seekToEndOfSection(self, data: DataStream) -> None:
         byte = data.read_bytes(1)
         while byte == b"\xab":
             byte = data.read_bytes(1)
         data.seek(data.tell() - 1)
+        return self.data
 
     def readLabelBlock(self, relativeStart: int, numberOfEntries: int, overSeeking=False) -> dict:
         entries = []
