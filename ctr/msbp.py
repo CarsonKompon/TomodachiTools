@@ -1,4 +1,4 @@
-from util.data_stream import DataStream
+from ctr.util.data_stream import DataStream
 
 from ctr.lib.lms.msbp.colors.clb1 import CLB1
 from ctr.lib.lms.msbp.colors.clr1 import CLR1
