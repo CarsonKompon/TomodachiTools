@@ -1,5 +1,5 @@
-from ...util.data_stream import DataStream
-from .pan1 import Pan1
+from ctr.util.data_stream import DataStream
+from ctr.lib.lyt.pan1 import Pan1
 
 """
 PIC1 (Picture 1)

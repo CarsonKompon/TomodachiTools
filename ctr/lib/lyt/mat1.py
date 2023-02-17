@@ -1,15 +1,15 @@
-from ...util.data_stream import DataStream
-from ...util.bit import extract_bits
+from ctr.util.data_stream import DataStream
+from ctr.util.bit import extract_bits
 
-from .material.texmap import TexMap
-from .material.texsrt import TexSRT
-from .material.texcoordgen import TexCoordGen
-from .material.tevstage import TevStage
-from .material.alphacompare import AlphaCompare
-from .material.blendmode import BlendMode
-from .material.indirectparameter import IndirectParameter
-from .material.projectiontexgenparam import ProjectionTexGenParam
-from .material.fontshadowparameter import FontShadowParameter
+from ctr.lib.lyt.material.texmap import TexMap
+from ctr.lib.lyt.material.texsrt import TexSRT
+from ctr.lib.lyt.material.texcoordgen import TexCoordGen
+from ctr.lib.lyt.material.tevstage import TevStage
+from ctr.lib.lyt.material.alphacompare import AlphaCompare
+from ctr.lib.lyt.material.blendmode import BlendMode
+from ctr.lib.lyt.material.indirectparameter import IndirectParameter
+from ctr.lib.lyt.material.projectiontexgenparam import ProjectionTexGenParam
+from ctr.lib.lyt.material.fontshadowparameter import FontShadowParameter
 
 """
 MAT1 (Materials 1)

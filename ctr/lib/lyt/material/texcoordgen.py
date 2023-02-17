@@ -1,6 +1,6 @@
 from enum import IntEnum
 
-from ....util.data_stream import DataStream
+from ctr.util.data_stream import DataStream
 
 """
 Texture Coordinate Generation Entry

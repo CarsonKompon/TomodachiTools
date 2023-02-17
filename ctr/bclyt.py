@@ -1,16 +1,16 @@
 import json
 
-from .util.data_stream import DataStream
+from ctr.util.data_stream import DataStream
 
-from .lib.lyt.layoutbase import LayoutBase
-from .lib.lyt.lyt1 import Lyt1
-from .lib.lyt.txl1 import Txl1
-from .lib.lyt.fnl1 import Fnl1
-from .lib.lyt.mat1 import Mat1
-from .lib.lyt.pan1 import Pan1, Bnd1
-from .lib.lyt.pic1 import Pic1
-from .lib.lyt.txt1 import Txt1
-from .clyt import Clyt
+from ctr.lib.lyt.layoutbase import LayoutBase
+from ctr.lib.lyt.lyt1 import Lyt1
+from ctr.lib.lyt.txl1 import Txl1
+from ctr.lib.lyt.fnl1 import Fnl1
+from ctr.lib.lyt.mat1 import Mat1
+from ctr.lib.lyt.pan1 import Pan1, Bnd1
+from ctr.lib.lyt.pic1 import Pic1
+from ctr.lib.lyt.txt1 import Txt1
+from ctr.clyt import Clyt
 
 class Bclyt(LayoutBase):
     """A class to represent a BCLYT file."""

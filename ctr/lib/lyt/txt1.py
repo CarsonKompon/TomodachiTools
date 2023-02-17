@@ -1,7 +1,7 @@
 from enum import IntEnum
-from .pan1 import Pan1
+from ctr.lib.lyt.pan1 import Pan1
 
-from ...util.data_stream import DataStream
+from ctr.util.data_stream import DataStream
 
 """
 PIC1 (Picture 1)

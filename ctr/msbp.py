@@ -1,7 +1,7 @@
 from util.data_stream import DataStream
 
-from .lib.lms.msbp.colors.clb1 import CLB1
-from .lib.lms.msbp.colors.clr1 import CLR1
+from ctr.lib.lms.msbp.colors.clb1 import CLB1
+from ctr.lib.lms.msbp.colors.clr1 import CLR1
 
 
 class Msbp:
