@@ -6,6 +6,11 @@ from ctr.msbp import Msbp
 # Get arguments from command line
 args = sys.argv[1:]
 
+# Check if there are any arguments
+if len(args) == 0:
+    print("Usage: python unpack.py <bclyt|msbp> <file> [<output>]")
+    exit()
+
 # Unpack the file based on the arguments
 match args[0]:
     case "bclyt":
@@ -18,4 +23,6 @@ match args[0]:
             print("Usage: python unpack.py msbp <file> [<output>]")
             exit()
         msbp = Msbp(args[1])
+    case _:
+        print("Usage: python unpack.py <bclyt|msbp> <file> [<output>]")
             

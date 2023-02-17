@@ -40,9 +40,11 @@ class Bclyt(LayoutBase):
 
     def parse(self, filepath: str):
         self.filepath = filepath
-        
+
         # Read the BCLYT file
         with open(filepath, 'rb') as d:
+
+            print("Parsing BCLYT file...")
 
             # Create a data stream object
             data = DataStream(d)
@@ -157,7 +159,7 @@ class Bclyt(LayoutBase):
                     # TODO: Add usd1, wnd1, pas1, pae1, pts1, grp1, grs1, and gre1 support
 
 
-            print(json.dumps(self.layoutParams.__dict__, indent=4))
+            print(json.dumps(self.__dict__, indent=4))
 
     def export(self, outpath=None):
         """Exports the BCLYT class as a BCLYT file."""
