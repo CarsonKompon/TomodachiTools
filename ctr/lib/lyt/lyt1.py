@@ -26,7 +26,7 @@ class Lyt1:
 
     sectionSize: int = None
     originType: OriginType = OriginType.CLASSIC
-    canvasSize: tuple = (0, 0)
+    canvasSize: tuple[int, int] = (0, 0)
 
     def __init__(self, data: DataStream = None):
         if data is not None:
