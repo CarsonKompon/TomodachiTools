@@ -73,11 +73,8 @@ class Bclyt(LayoutBase):
             # Read the next 4 bytes to get the file size
             self.fileSize = data.read_uint32()
 
-            # Read the next 2 bytes to get the number of sections
-            self.sectionCount = data.read_uint16()
-
-            # Read the next 2 bytes to get the padding
-            self.padding = data.read_uint16()
+            # Read the next 4 bytes to get the number of sections
+            self.sectionCount = data.read_uint32()
 
             # Read the next 4 bytes to check for valid magic
             magic = data.read_string(4)
@@ -159,7 +156,7 @@ class Bclyt(LayoutBase):
                     # TODO: Add usd1, wnd1, pas1, pae1, pts1, grp1, grs1, and gre1 support
 
 
-            print(json.dumps(self.__dict__, indent=4))
+            print(str(self))
 
     def export(self, outpath=None):
         """Exports the BCLYT class as a BCLYT file."""
@@ -175,3 +172,23 @@ class Bclyt(LayoutBase):
         """Converts the BCLYT class to a CLYT class."""
 
         # TODO: Implement a BCLYT to CLYT converter once the Clyt class is implemented
+    
+    def __str__(self) -> str:
+        string = "{"
+        string += f"filepath: {self.filepath}, "
+        string += f"signature: {self.signature}, "
+        string += f"byteOrderMark: {self.byteOrderMark}, "
+        string += f"headerLength: {self.headerLength}, "
+        string += f"revision: {self.revision}, "
+        string += f"fileSize: {self.fileSize}, "
+        string += f"sectionCount: {self.sectionCount}, "
+        string += f"padding: {self.padding}, "
+        string += f"layoutParams: {str(self.layoutParams)}, "
+        string += f"textureList: {str(self.textureList)}, "
+        string += f"fontList: {str(self.fontList)}, "
+        string += f"materialList: {str(self.materialList)}, "
+        string += f"layout: {self.layout}, "
+        string += f"rootGroup: {self.rootGroup}, "
+        string += f"userDataEntries: {self.userDataEntries}"
+        string += "}"
+        return string

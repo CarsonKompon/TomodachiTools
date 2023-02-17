@@ -34,3 +34,11 @@ class AlphaCompare:
         self.unknown = data.read_bytes(0x3)
 
         return data
+    
+    def __str__(self) -> str:
+        json = "{"
+        json += f'"compareMode": {self.compareMode}, '
+        json += f'"referenceAlpha": {self.referenceAlpha}, '
+        json += f'"unknown": {self.unknown}'
+        json += "}"
+        return json    

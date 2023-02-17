@@ -1,5 +1,5 @@
 
-def extract_bits( value, num_bits, start_bit ):
+def extract_bits(value, num_bits, start_bit):
     """Extracts a number of bits from a value, starting at a given bit position."""
     mask = 0
     for i in range(start_bit, start_bit + num_bits):

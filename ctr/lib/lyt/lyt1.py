@@ -45,3 +45,11 @@ class Lyt1:
         self.canvasSize = data.read_vector2()
 
         return data
+    
+    def __str__(self) -> str:
+        json = "{"
+        json += f'"sectionSize": {self.sectionSize}, '
+        json += f'"originType": {self.originType}, '
+        json += f'"canvasSize": {self.canvasSize}'
+        json += "}"
+        return json

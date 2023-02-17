@@ -53,26 +53,29 @@ class Pan1(LayoutBase):
     def read(self, data: DataStream) -> DataStream:
         """Reads the PAN1 section from a data stream"""
 
+        # Store the start offset of the section
+        startPos = data.tell()
+
         # Read in the section size as a 32-bit unsigned integer
         self.sectionSize = data.read_uint32()
 
         # Read in the flags as a single byte and determine the boolean values from it
-        self.flags = data.read_bytes(1)
+        self.flags = data.read_uint8()
         self.isVisible = extract_bits(self.flags, 1, 0)
         self.influencedAlpha = extract_bits(self.flags, 1, 1)
         self.locationAdjustment = extract_bits(self.flags, 1, 2)
 
         # Read in the origin, alpha, and panemagflags as single bytes
-        self.origin = data.read_bytes(1)
-        self.alpha = data.read_bytes(1)
-        self.magFlags = data.read_bytes(1)
+        self.origin = data.read_uint8()
+        self.alpha = data.read_uint8()
+        self.magFlags = data.read_uint8()
 
         # Determine the boolean values from the panemagflags
         self.ignorePartsMagnify = extract_bits(self.magFlags, 1, 0)
         self.adjustToPartsBounds = extract_bits(self.magFlags, 1, 1)
 
         # Read in the name as a string of length 0x18
-        self.name = data.read_string(0x18)
+        self.name = data.read_string(0x18).replace("\0", "")
 
         # Read in the position and rotation as vector3s
         self.position = data.read_vector3()
@@ -82,7 +85,30 @@ class Pan1(LayoutBase):
         self.height = data.read_float()
         self.width = data.read_float()
 
+        # Seek to the end of the section
+        data.seek(startPos + self.sectionSize)
+
         return data
+    
+    def __str__(self) -> str:
+        json = "{"
+        json += f'"sectionSize": {self.sectionSize},'
+        json += f'"flags": {self.flags},'
+        json += f'"isVisible": {self.isVisible},'
+        json += f'"influencedAlpha": {self.influencedAlpha},'
+        json += f'"locationAdjustment": {self.locationAdjustment},'
+        json += f'"origin": {self.origin},'
+        json += f'"alpha": {self.alpha},'
+        json += f'"magFlags": {self.magFlags},'
+        json += f'"ignorePartsMagnify": {self.ignorePartsMagnify},'
+        json += f'"adjustToPartsBounds": {self.adjustToPartsBounds},'
+        json += f'"name": "{self.name}",'
+        json += f'"position": {self.position},'
+        json += f'"rotation": {self.rotation},'
+        json += f'"height": {self.height},'
+        json += f'"width": {self.width}'
+        json += "}"
+        return json
 
 class Bnd1(Pan1):
 
