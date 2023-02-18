@@ -1,6 +1,7 @@
 from enum import IntEnum
 
 from ctr.util.data_stream import DataStream
+from ctr.util.serialize import JsonSerialize
 
 """
 Texture Map Entry
@@ -47,11 +48,19 @@ class TexMap:
         tVal = data.read_bytes(1)
 
         # Determine the wrap and filter modes
-        self.wrapModeS = sVal & 0x3
-        self.filterModeMin = (sVal >> 2) & 0x3
+        self.wrapModeS = WrapMode(sVal & 0x3)
+        self.filterModeMin = FilterMode((sVal >> 2) & 0x3)
 
-        self.wrapModeT = tVal & 0x3
-        self.filterModeMag = (tVal >> 2) & 0x3
+        self.wrapModeT = WrapMode(tVal & 0x3)
+        self.filterModeMag = FilterMode((tVal >> 2) & 0x3)
 
         return data
 
+    def __str__(self) -> str:
+        j = JsonSerialize()
+        j.add("textureIndex", self.textureIndex)
+        j.add("wrapModeS", self.wrapModeS, True)
+        j.add("wrapModeT", self.wrapModeT, True)
+        j.add("filterModeMin", self.filterModeMin, True)
+        j.add("filterModeMag", self.filterModeMag, True)
+        return j.serialize()

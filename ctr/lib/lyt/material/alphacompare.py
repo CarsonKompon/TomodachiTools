@@ -1,4 +1,5 @@
 from ctr.util.data_stream import DataStream
+from ctr.util.serialize import JsonSerialize
 
 """
 Alpha Compare Entry
@@ -36,9 +37,8 @@ class AlphaCompare:
         return data
     
     def __str__(self) -> str:
-        json = "{"
-        json += f'"compareMode": {self.compareMode}, '
-        json += f'"referenceAlpha": {self.referenceAlpha}, '
-        json += f'"unknown": {self.unknown}'
-        json += "}"
-        return json    
+        j = JsonSerialize()
+        j.add("compareMode", self.compareMode)
+        j.add("referenceAlpha", self.referenceAlpha)
+        j.add("unknown", self.unknown)
+        return j.serialize()

@@ -1,4 +1,5 @@
 from ctr.util.data_stream import DataStream
+from ctr.util.serialize import JsonSerialize
 
 """
 TXL1 (Texture List 1)
@@ -56,9 +57,8 @@ class Txl1:
         return name in self.strings
     
     def __str__(self) -> str:
-        string = "{"
-        string += f"textureCount: {self.textureCount},"
-        string += f"strings: {self.strings}"
-        string += "}"
-        return string
+        j = JsonSerialize()
+        j.add("textureCount", self.textureCount)
+        j.add("strings", self.strings)
+        return j.serialize()
 

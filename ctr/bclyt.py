@@ -1,6 +1,7 @@
 import json
 
 from ctr.util.data_stream import DataStream
+from ctr.util.serialize import JsonSerialize
 
 from ctr.lib.lyt.layoutbase import LayoutBase
 from ctr.lib.lyt.lyt1 import Lyt1
@@ -20,7 +21,6 @@ class Bclyt(LayoutBase):
 
     filepath: str = None
 
-    signature: str = None
     byteOrderMark: str = None
     headerLength: int = None
     revision: int = None
@@ -39,6 +39,7 @@ class Bclyt(LayoutBase):
     userDataEntries = None
 
     def __init__(self, filepath: str = None):
+        self.type = 'Layout'
         if filepath is not None:
             self.parse(filepath)
 
@@ -54,8 +55,8 @@ class Bclyt(LayoutBase):
             data = DataStream(d)
 
             # Read the first 4 bytes of the file as a string to check for a valid signature
-            self.signature = data.read_string(4)
-            if self.signature != 'CLYT':
+            signature = data.read_string(4)
+            if signature != 'CLYT':
                 raise ValueError("Input file specified has an invalid signature! (Expected 'CLYT', got '" + str(self.signature) + "')")
             
             # Read the next 2 bytes to get the byte order mark
@@ -126,7 +127,6 @@ class Bclyt(LayoutBase):
                         
                         if layoutParent is not None:
                             layoutParent.add_child(pane)
-                            pane.parent = layoutParent
                         
                         layoutPrevious = pane
                     case 'pic1':
@@ -136,7 +136,6 @@ class Bclyt(LayoutBase):
 
                         if layoutParent is not None:
                             layoutParent.add_child(pic)
-                            pic.parent = layoutParent
                         
                         layoutPrevious = pic
                     case 'bnd1':
@@ -146,7 +145,6 @@ class Bclyt(LayoutBase):
 
                         if layoutParent is not None:
                             layoutParent.add_child(bnd)
-                            bnd.parent = layoutParent
                         
                         layoutPrevious = bnd
                     case 'txt1':
@@ -156,7 +154,6 @@ class Bclyt(LayoutBase):
 
                         if layoutParent is not None:
                             layoutParent.add_child(txt)
-                            txt.parent = layoutParent
                         
                         layoutPrevious = txt
                     case 'usd1':
@@ -173,7 +170,6 @@ class Bclyt(LayoutBase):
 
                         if layoutParent is not None:
                             layoutParent.add_child(wnd)
-                            wnd.parent = layoutParent
                         
                         layoutPrevious = wnd
                     case 'pas1':
@@ -199,7 +195,6 @@ class Bclyt(LayoutBase):
                         
                         if groupParent is not None:
                             groupParent.add_child(grp)
-                            grp.parent = groupParent
                         
                         groupPrevious = grp
                     case 'grs1':
@@ -233,22 +228,16 @@ class Bclyt(LayoutBase):
         # TODO: Implement a BCLYT to CLYT converter once the Clyt class is implemented
     
     def __str__(self) -> str:
-        string = "{"
-        string += f"filepath: {self.filepath},"
-        string += f"signature: {self.signature},"
-        string += f"byteOrderMark: {self.byteOrderMark},"
-        string += f"headerLength: {self.headerLength},"
-        string += f"revision: {self.revision},"
-        string += f"fileSize: {self.fileSize},"
-        string += f"sectionCount: {self.sectionCount},"
-        string += f"padding: {self.padding},"
-        string += f"layoutParams: {str(self.layoutParams)},"
-        string += f"textureList: {str(self.textureList)},"
-        string += f"fontList: {str(self.fontList)},"
-        string += f"materialList: {str(self.materialList)},"
-        string += f"layout: {self.layout},"
-        string += f"rootPane: {self.rootPane},"
-        string += f"rootGroup: {self.rootGroup},"
-        string += f"userDataEntries: {self.userDataEntries}"
-        string += "}"
-        return string
+        j = JsonSerialize(super().__str__())
+        j.add("byteOrderMark", self.byteOrderMark)
+        j.add("headerLength", self.headerLength)
+        j.add("revision", self.revision)
+        j.add("fileSize", self.fileSize)
+        j.add("sectionCount", self.sectionCount)
+        j.add("layoutParams", self.layoutParams)
+        j.add("textureList", self.textureList)
+        j.add("fontList", self.fontList)
+        j.add("materialList", self.materialList)
+        j.add("rootPane", self.rootPane)
+        j.add("rootGroup", self.rootGroup)
+        return j.serialize()

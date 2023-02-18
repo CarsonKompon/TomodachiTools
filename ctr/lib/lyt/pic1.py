@@ -1,4 +1,6 @@
 from ctr.util.data_stream import DataStream
+from ctr.util.serialize import JsonSerialize
+
 from ctr.lib.lyt.pan1 import Pan1
 
 """
@@ -48,7 +50,7 @@ class Pic1(Pan1):
 
     def __init__(self, data: DataStream = None):
         super().__init__(data)
-        self.layoutType = "Picture"
+        self.type = "Picture"
         if data is not None:
             self.read(data)
     
@@ -83,13 +85,12 @@ class Pic1(Pan1):
         return data
 
     def __str__(self) -> str:
-        string = super().__str__() # Get parent string
-        string = string[:-1] + "," # Remove the closing brace and add a comma
-        string += "vertexColorTopLeft: " + str(self.vertexColorTopLeft) + ","
-        string += "vertexColorTopRight: " + str(self.vertexColorTopRight) + ","
-        string += "vertexColorBottomLeft: " + str(self.vertexColorBottomLeft) + ","
-        string += "vertexColorBottomRight: " + str(self.vertexColorBottomRight) + ","
-        string += "materialId: " + str(self.materialId) + ","
-        string += "textureCoordCount: " + str(self.textureCoordCount) + ","
-        string += "textureCoords: " + str(self.textureCoords) + "}"
-        return string 
+        j = JsonSerialize(super().__str__())
+        j.add("vertexColorTopLeft", self.vertexColorTopLeft)
+        j.add("vertexColorTopRight", self.vertexColorTopRight)
+        j.add("vertexColorBottomLeft", self.vertexColorBottomLeft)
+        j.add("vertexColorBottomRight", self.vertexColorBottomRight)
+        j.add("materialId", self.materialId)
+        j.add("textureCoordCount", self.textureCoordCount)
+        j.add("textureCoords", self.textureCoords)
+        return j.serialize()

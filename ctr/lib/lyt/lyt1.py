@@ -1,6 +1,7 @@
 from enum import IntEnum
 
 from ctr.util.data_stream import DataStream
+from ctr.util.serialize import JsonSerialize
 
 """
 LYT1 (Layout 1)
@@ -41,7 +42,7 @@ class Lyt1:
         sectionSize = data.read_uint32()
 
         # Read the next 4 bytes to get the origin type
-        self.originType = data.read_uint32()
+        self.originType = OriginType(data.read_uint32())
 
         # Read the next 8 bytes to get the x and y floats for the canvas size
         self.canvasSize = data.read_vector2()
@@ -52,8 +53,7 @@ class Lyt1:
         return data
     
     def __str__(self) -> str:
-        json = "{"
-        json += f'"originType": {self.originType},'
-        json += f'"canvasSize": {self.canvasSize}'
-        json += "}"
-        return json
+        j = JsonSerialize()
+        j.add("originType", self.originType, True)
+        j.add("canvasSize", self.canvasSize)
+        return j.serialize()

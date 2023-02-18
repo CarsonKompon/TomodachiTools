@@ -1,5 +1,6 @@
 from ctr.util.data_stream import DataStream
 from ctr.util.bit import extract_bits
+from ctr.util.serialize import JsonSerialize
 
 from ctr.lib.lyt.material.texmap import TexMap
 from ctr.lib.lyt.material.texsrt import TexSRT
@@ -163,34 +164,34 @@ class Mat1Material:
         return data
     
     def __str__(self) -> str:
-        string = "{"
-        string += f"name: {self.name},"
-        string += f"tevColor: {self.tevColor},"
-        string += f"tevConstantColors: {self.tevConstantColors},"
-        string += f"flags: {self.flags},"
-        string += f"texMapCount: {self.texMapCount},"
-        string += f"texMtxCount: {self.texMtxCount},"
-        string += f"texCoordGenCount: {self.texCoordGenCount},"
-        string += f"tevStageCount: {self.tevStageCount},"
-        string += f"hasAlphaCompare: {self.hasAlphaCompare},"
-        string += f"hasBlendMode: {self.hasBlendMode},"
-        string += f"useTextureOnly: {self.useTextureOnly},"
-        string += f"separateBlendMode: {self.separateBlendMode},"
-        string += f"hasIndParam: {self.hasIndParam},"
-        string += f"projTextGenParamCount: {self.projTextGenParamCount},"
-        string += f"hasFontShadowParam: {self.hasFontShadowParam},"
-        string += f"texMaps: {self.texMaps},"
-        string += f"texSRTs: {self.texSRTs},"
-        string += f"texCoords: {self.texCoords},"
-        string += f"tevStages: {self.tevStages},"
-        string += f"alphaCompare: {self.alphaCompare},"
-        string += f"blendModeBlend: {self.blendModeBlend},"
-        string += f"blendModeLogic: {self.blendModeLogic},"
-        string += f"indParam: {self.indParam},"
-        string += f"projTextGenParam: {self.projTextGenParam},"
-        string += f"fontShadowParam: {self.fontShadowParam}"
-        string += "}"
-        return string
+        j = JsonSerialize()
+        j.add("name", self.name)
+        j.add("tevColor", self.tevColor)
+        j.add("tevConstantColors", self.tevConstantColors)
+        # j.add("flags", self.flags)
+        j.add("texMapCount", self.texMapCount)
+        j.add("texMtxCount", self.texMtxCount)
+        j.add("texCoordGenCount", self.texCoordGenCount)
+        j.add("tevStageCount", self.tevStageCount)
+        j.add("hasAlphaCompare", self.hasAlphaCompare)
+        j.add("hasBlendMode", self.hasBlendMode)
+        j.add("useTextureOnly", self.useTextureOnly)
+        j.add("separateBlendMode", self.separateBlendMode)
+        j.add("hasIndParam", self.hasIndParam)
+        j.add("projTextGenParamCount", self.projTextGenParamCount)
+        j.add("hasFontShadowParam", self.hasFontShadowParam)
+        j.add("texMaps", self.texMaps)
+        j.add("texSRTs", self.texSRTs)
+        j.add("texCoords", self.texCoords)
+        j.add("tevStages", self.tevStages)
+        j.add("alphaCompare", self.alphaCompare)
+        j.add("blendModeBlend", self.blendModeBlend)
+        j.add("blendModeLogic", self.blendModeLogic)
+        j.add("indParam", self.indParam)
+        j.add("projTextGenParam", self.projTextGenParam)
+        j.add("fontShadowParam", self.fontShadowParam)
+        return j.serialize()
+        
 
 class Mat1:
     """A MAT1 section in a CTR file"""
@@ -241,9 +242,6 @@ class Mat1:
         return self.materials[index].name
 
     def __str__(self) -> str:
-        string = "{"
-        string += f"materialCount: {self.materialCount},"
-        string += f"sectionOffsets: {self.sectionOffsets},"
-        string += f"materials: {self.materials}"
-        string += "}"
-        return string
+        j = JsonSerialize()
+        j.add("materials", self.materials)
+        return j.serialize()

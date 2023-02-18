@@ -1,6 +1,7 @@
 from enum import IntEnum
 
 from ctr.util.data_stream import DataStream
+from ctr.util.serialize import JsonSerialize
 
 """
 Texture Coordinate Generation Entry
@@ -41,8 +42,14 @@ class TexCoordGen:
         """Reads the TexMap section from a material data stream"""
 
         # Read in the type and source as bytes
-        self.genType = data.read_bytes(1)
-        self.genSource = data.read_bytes(1)
+        self.genType = TexGenType(data.read_uint8())
+        self.genSource = TexGenSource(data.read_uint8())
         self.padding = data.read_bytes(2)
 
         return data
+    
+    def __str__(self) -> str:
+        j = JsonSerialize()
+        j.add("genType", self.genType, True)
+        j.add("genSource", self.genSource, True)
+        return j.serialize()

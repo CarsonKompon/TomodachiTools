@@ -1,4 +1,5 @@
 from ctr.util.data_stream import DataStream
+from ctr.util.serialize import JsonSerialize
 
 """
 Projection Tex Gen Param Entry
@@ -46,3 +47,12 @@ class ProjectionTexGenParam:
         self.padding = data.read_bytes(3)
 
         return data
+
+    def __str__(self) -> str:
+        j = JsonSerialize()
+        j.add("position", self.position)
+        j.add("scale", self.scale)
+        j.add("isFittingLayoutSize", self.isFittingLayoutSize)
+        j.add("isFittingPaneSize", self.isFittingPaneSize)
+        j.add("isAdjustProjectionSR", self.isAdjustProjectionSR)
+        return j.serialize()

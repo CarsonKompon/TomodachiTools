@@ -1,5 +1,5 @@
 from ctr.util.data_stream import DataStream
-from ctr.util.bit import extract_bits
+from ctr.util.serialize import JsonSerialize
 
 from ctr.lib.lyt.layoutbase import LayoutBase
 
@@ -27,11 +27,11 @@ Offset |  Size  |   Type   | Description
 class Grp1(LayoutBase):
     """A GRP1 section in a CTR file"""
 
-    name: str = None
     paneCount: int = None
     entries: list[str] = None
 
     def __init__(self, data: DataStream = None):
+        self.type = "Group"
         if data is not None:
             self.read(data)
 
@@ -58,13 +58,7 @@ class Grp1(LayoutBase):
         return data
     
     def __str__(self) -> str:
-        json = "{"
-        json += f'"name": "{self.name}", '
-        json += f'"paneCount": {self.paneCount}, '
-        json += f'"entries": ['
-        if self.entries is not None:
-            for entry in self.entries:
-                json += f'"{entry}", '
-            json = json[:-2]
-        json += "]}"
-        return json
+        j = JsonSerialize(super().__str__())
+        j.add("paneCount", self.paneCount)
+        j.add("entries", self.entries)
+        return j.serialize()

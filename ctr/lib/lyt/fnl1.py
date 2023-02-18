@@ -1,4 +1,5 @@
 from ctr.util.data_stream import DataStream
+from ctr.util.serialize import JsonSerialize
 
 """
 FNL1 (Font List 1)
@@ -52,9 +53,8 @@ class Fnl1:
         return data
     
     def __str__(self) -> str:
-        string = "{" + f"fontCount: {self.fontCount}, strings: ["
-        for i in range(self.fontCount):
-            string += f"{self.strings[i]},"
-        string = string[:-1] + "]}"
-        return string
+        j = JsonSerialize()
+        j.add("fontCount", self.fontCount)
+        j.add("strings", self.strings)
+        return j.serialize()
 

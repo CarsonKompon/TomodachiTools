@@ -1,7 +1,7 @@
-from enum import IntEnum
-from ctr.lib.lyt.pan1 import Pan1
-
 from ctr.util.data_stream import DataStream
+from ctr.util.serialize import JsonSerialize
+
+from ctr.lib.lyt.pan1 import Pan1
 
 """
 PIC1 (Picture 1)
@@ -42,7 +42,7 @@ class Txt1(Pan1):
 
     bufferLength: int = None
     stringLength: int = None
-    materialIdx: int = None
+    materialId: int = None
     fontNum: int = None
     anotherOrigin: int = None
     alignment: int = None
@@ -59,9 +59,9 @@ class Txt1(Pan1):
     string: str = None
 
     def __init__(self, data: DataStream = None):
+        self.type = "Text Box"
         if data is not None:
             self.read(data)
-        self.layoutType = "Text Box"
 
     def read(self, data: DataStream) -> DataStream:
         data = super().read(data)
@@ -72,7 +72,7 @@ class Txt1(Pan1):
         # Read unsigned 16-bit integers
         self.bufferLength = data.read_uint16()
         self.stringLength = data.read_uint16()
-        self.materialIdx = data.read_uint16()
+        self.materialId = data.read_uint16()
         self.fontNum = data.read_uint16()
 
         # Read single bytes
@@ -106,21 +106,20 @@ class Txt1(Pan1):
         return data
 
     def __str__(self):
-        string = "{"
-        string += f"bufferLength: {self.bufferLength}, "
-        string += f"stringLength: {self.stringLength}, "
-        string += f"materialIdx: {self.materialIdx}, "
-        string += f"fontNum: {self.fontNum}, "
-        string += f"anotherOrigin: {self.anotherOrigin}, "
-        string += f"alignment: {self.alignment}, "
-        string += f"unknown: {self.unknown}, "
-        string += f"textOffset: {self.textOffset}, "
-        string += f"topColor: {self.topColor}, "
-        string += f"bottomColor: {self.bottomColor}, "
-        string += f"sizeX: {self.sizeX}, "
-        string += f"sizeY: {self.sizeY}, "
-        string += f"characterSize: {self.characterSize}, "
-        string += f"lineSize: {self.lineSize}, "
-        string += f"string: {self.string}"
-        string += "}"
-        return string
+        j = JsonSerialize()
+        # j.add("bufferLength", self.bufferLength)
+        # j.add("stringLength", self.stringLength)
+        j.add("materialId", self.materialId)
+        j.add("fontNum", self.fontNum)
+        j.add("anotherOrigin", self.anotherOrigin)
+        j.add("alignment", self.alignment)
+        j.add("unknown", self.unknown)
+        # j.add("textOffset", self.textOffset)
+        j.add("topColor", self.topColor)
+        j.add("bottomColor", self.bottomColor)
+        j.add("sizeX", self.sizeX)
+        j.add("sizeY", self.sizeY)
+        j.add("characterSize", self.characterSize)
+        j.add("lineSize", self.lineSize)
+        j.add("string", self.string)
+        return j.serialize()

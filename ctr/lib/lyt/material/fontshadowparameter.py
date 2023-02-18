@@ -1,4 +1,5 @@
 from ctr.util.data_stream import DataStream
+from ctr.util.serialize import JsonSerialize
 
 """
 Font Shadow Parameter Entry
@@ -34,14 +35,25 @@ class FontShadowParameter:
         """Reads the FontShadowParameter section from a material data stream"""
 
         # Read in each value as a single byte
-        self.blackRed = data.read_bytes(1)
-        self.blackGreen = data.read_bytes(1)
-        self.blackBlue = data.read_bytes(1)
-        self.whiteRed = data.read_bytes(1)
-        self.whiteGreen = data.read_bytes(1)
-        self.whiteBlue = data.read_bytes(1)
-        self.whiteAlpha = data.read_bytes(1)
+        self.blackRed = data.read_uint8()
+        self.blackGreen = data.read_uint8()
+        self.blackBlue = data.read_uint8()
+        self.whiteRed = data.read_uint8()
+        self.whiteGreen = data.read_uint8()
+        self.whiteBlue = data.read_uint8()
+        self.whiteAlpha = data.read_uint8()
 
         data.read_bytes(1) # Read in padding (?)
 
         return data
+
+    def __str__(self) -> str:
+        j = JsonSerialize()
+        j.add("blackRed", self.blackRed)
+        j.add("blackGreen", self.blackGreen)
+        j.add("blackBlue", self.blackBlue)
+        j.add("whiteRed", self.whiteRed)
+        j.add("whiteGreen", self.whiteGreen)
+        j.add("whiteBlue", self.whiteBlue)
+        j.add("whiteAlpha", self.whiteAlpha)
+        return j.serialize()

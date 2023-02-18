@@ -1,5 +1,6 @@
 from ctr.util.data_stream import DataStream
 from ctr.util.bit import extract_bits
+from ctr.util.serialize import JsonSerialize
 
 from ctr.lib.lyt.layoutbase import LayoutBase
 
@@ -39,7 +40,6 @@ class Pan1(LayoutBase):
     ignorePartsMagnify: bool = None
     adjustToPartsBounds: bool = None
 
-    name: str = None
     dataString: str = None
     position: tuple[float, float, float] = None
     rotation: tuple[float, float, float] = None
@@ -48,6 +48,8 @@ class Pan1(LayoutBase):
     height: float = None
 
     def __init__(self, data: DataStream = None):
+        super().__init__()
+        self.type = "Panel"
         if data is not None:
             self.read(data)
 
@@ -95,28 +97,27 @@ class Pan1(LayoutBase):
         return data
     
     def __str__(self) -> str:
-        json = super().__str__()[:-1] + ","
-        json += f'"flags": {self.flags},'
-        json += f'"isVisible": {self.isVisible},'
-        json += f'"influencedAlpha": {self.influencedAlpha},'
-        json += f'"locationAdjustment": {self.locationAdjustment},'
-        json += f'"origin": {self.origin},'
-        json += f'"alpha": {self.alpha},'
-        json += f'"magFlags": {self.magFlags},'
-        json += f'"ignorePartsMagnify": {self.ignorePartsMagnify},'
-        json += f'"adjustToPartsBounds": {self.adjustToPartsBounds},'
-        json += f'"name": "{self.name}",'
-        json += f'"position": {self.position},'
-        json += f'"rotation": {self.rotation},'
-        json += f'"height": {self.height},'
-        json += f'"width": {self.width}'
-        json += "}"
-        return json
+        j = JsonSerialize(super().__str__())
+        j.add("isVisible", self.isVisible)
+        j.add("influencedAlpha", self.influencedAlpha)
+        j.add("locationAdjustment", self.locationAdjustment)
+        j.add("origin", self.origin)
+        j.add("alpha", self.alpha)
+        j.add("ignorePartsMagnify", self.ignorePartsMagnify)
+        j.add("adjustToPartsBounds", self.adjustToPartsBounds)
+        j.add("dataString", self.dataString)
+        j.add("position", self.position)
+        j.add("rotation", self.rotation)
+        j.add("scale", self.scale)
+        j.add("width", self.width)
+        j.add("height", self.height)
+        return j.serialize()
+
 
 class Bnd1(Pan1):
 
     def __init__(self, data: DataStream = None):
         super().__init__(data)
-        self.layoutType = "Bounding Box"
+        self.type = "Bounding Box"
         if data is not None:
             self.read(data)

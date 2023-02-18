@@ -1,4 +1,7 @@
+from enum import IntEnum
+
 from ctr.util.data_stream import DataStream
+from ctr.util.serialize import JsonSerialize
 
 """
 USD1 (User Data 1?)
@@ -28,6 +31,11 @@ If the type is one, then the value is an int and setting is the number of ints t
 If the type is two, then the value is a float and setting is the number of floats to read into an array.
 """
 
+class UsdDataType(IntEnum):
+    STRING = 0
+    INT = 1
+    FLOAT = 2
+
 class Usd1:
     """A USD1 section in a CTR file"""
 
@@ -53,7 +61,7 @@ class Usd1:
 
         # Read in the entries
         self.entries = []
-        for i in range(self.entryCount):
+        for _ in range(self.entryCount):
             entry = Usd1Entry()
             data = entry.read(data)
             self.entries.append(entry)
@@ -64,15 +72,10 @@ class Usd1:
         return data
     
     def __str__(self) -> str:
-        string = "{"
-        string += f"entryCount: {self.entryCount},"
-        string += f"entries: ["
-        for i in range(len(self.entries)):
-            string += f"{self.entries[i]}"
-            if i < len(self.entries) - 1:
-                string += ","
-        string += "]}"
-        return string
+        j = JsonSerialize()
+        j.add("entryCount", self.entryCount)
+        j.add("entries", self.entries)
+        return j.serialize()
 
 class Usd1Entry:
     """A USD1 entry in a USD1 section within a CTR"""
@@ -81,7 +84,7 @@ class Usd1Entry:
     name: str = None
     dataOffset: int = None
     setting: int = None
-    type: int = None
+    type: UsdDataType = None
     unkown: bytes = None
 
     value: str or list[int or float] = None
@@ -109,7 +112,7 @@ class Usd1Entry:
         self.setting = data.read_uint16()
 
         # Read the next byte to get the type
-        self.type = data.read_uint8()
+        self.type = UsdDataType(data.read_uint8())
 
         # Read the next byte to get the unknown
         self.unknown = data.read_bytes(1)
@@ -134,13 +137,12 @@ class Usd1Entry:
         return name in self.strings
     
     def __str__(self) -> str:
-        string = "{"
-        string += f"nameOffset: {self.nameOffset},"
-        string += f"name: {self.name},"
-        string += f"dataOffset: {self.dataOffset},"
-        string += f"setting: {self.setting},"
-        string += f"type: {self.type},"
-        string += f"unknown: {self.unknown},"
-        string += f"value: {self.value}"
-        string += "}"
-        return string
+        j = JsonSerialize()
+        # j.add("nameOffset", self.nameOffset)
+        j.add("name", self.name)
+        # j.add("dataOffset", self.dataOffset)
+        # j.add("setting", self.setting)
+        j.add("type", self.type, True)
+        # j.add("unknown", self.unknown)
+        j.add("value", self.value)
+        return j.serialize()

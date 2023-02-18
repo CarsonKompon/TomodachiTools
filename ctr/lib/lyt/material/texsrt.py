@@ -1,4 +1,5 @@
 from ctr.util.data_stream import DataStream
+from ctr.util.serialize import JsonSerialize
 
 """
 Texture Matrix Entry
@@ -44,3 +45,9 @@ class TexSRT:
 
     #     return data
 
+    def __str__(self) -> str:
+        j = JsonSerialize()
+        j.add("translation", self.translation)
+        j.add("rotation", self.rotation)
+        j.add("scale", self.scale)
+        return j.serialize()

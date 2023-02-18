@@ -1,4 +1,5 @@
 from ctr.util.data_stream import DataStream
+from ctr.util.serialize import JsonSerialize
 
 """
 Tev Stage Entry
@@ -32,3 +33,10 @@ class TevStage:
         self.unknown = data.read_uint16()
 
         return data
+
+    def __str__(self) -> str:
+        j = JsonSerialize()
+        j.add("rgbMode", self.rgbMode)
+        j.add("alphaMode", self.alphaMode)
+        j.add("unknown", self.unknown)
+        return j.serialize()

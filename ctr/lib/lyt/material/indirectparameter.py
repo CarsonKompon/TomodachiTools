@@ -1,4 +1,5 @@
 from ctr.util.data_stream import DataStream
+from ctr.util.serialize import JsonSerialize
 
 """
 Indirect Parameter Entry
@@ -29,3 +30,10 @@ class IndirectParameter:
         self.scale = data.read_vector2()
 
         return data
+    
+    def __str__(self) -> str:
+        j = JsonSerialize()
+        j.add("rotation", self.rotation)
+        j.add("scale", self.scale)
+        return j.serialize()
+    

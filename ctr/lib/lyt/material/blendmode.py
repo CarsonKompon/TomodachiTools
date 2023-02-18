@@ -1,6 +1,7 @@
 from enum import IntEnum
 
 from ctr.util.data_stream import DataStream
+from ctr.util.serialize import JsonSerialize
 
 """
 Blend Mode Entry
@@ -71,9 +72,17 @@ class BlendMode:
         """Reads the BlendMode section from a material data stream"""
 
         # Read in each mode as a single byte
-        self.blendOp = data.read_bytes(1)
-        self.blendFactorSrc = data.read_bytes(1)
-        self.blendFactorDest = data.read_bytes(1)
-        self.logicOp = data.read_bytes(1)
+        self.blendOp = BlendOp(data.read_bytes(1))
+        self.blendFactorSrc = BlendFactor(data.read_bytes(1))
+        self.blendFactorDest = BlendFactor(data.read_bytes(1))
+        self.logicOp = LogicOp(data.read_bytes(1))
 
         return data
+    
+    def __str__(self) -> str:
+        j = JsonSerialize()
+        j.add("blendOp", self.blendOp, True)
+        j.add("blendFactorSrc", self.blendFactorSrc, True)
+        j.add("blendFactorDest", self.blendFactorDest, True)
+        j.add("logicOp", self.logicOp, True)
+        return j.serialize()

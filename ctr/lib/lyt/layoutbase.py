@@ -1,8 +1,10 @@
+from ctr.util.serialize import JsonSerialize
+
 from ctr.lib.lyt.usd1 import Usd1
 
 class LayoutBase:
-    layoutType: str = None
-    layoutName: str = None
+    type: str = None
+    name: str = None
     
     children: list['LayoutBase'] = []
     parent: 'LayoutBase' = None
@@ -13,32 +15,31 @@ class LayoutBase:
 
     def add_child(self, child):
         self.children.append(child)
+        child.parent = self
     
     def add_user_data(self, user_data):
         self.userData.append(user_data)
 
     def __str__(self) -> str:
-        string = "{"
-        string += f"layoutType: {self.layoutType},"
-        string += f"layoutName: {self.layoutName},"
-        if self.parent is not None:
-            string += f"parent: {self.parent.name},"
-        else:
-            string += f"parent: None,"
-        if self.rootPane is not None:
-            string += f"rootPane: {self.rootPane.name},"
-        else:
-            string += f"rootPane: None,"
+        j = JsonSerialize()
+        j.add("type", self.type)
+        j.add("name", self.name)
 
-        string += f"userData: ["
-        for data in self.userData:
-            string += f"{data},"
-        string += "],"
-
-        string += f"children: ["
-        for child in self.children:
-            string += f"{child.name},"
-        string += "]}"
+        children = []
+        if self.parent is None:
+            for child in self.children:
+                children.append(child)
+        else:
+            for child in self.children:
+                if child is not None:
+                    children.append(child.name)
+        j.add("children", children)
         
-        return string
-    
+        if self.parent is not None:
+            j.add("parent", self.parent.name)
+        else:
+            j.add("parent", None)
+
+        j.add("rootPane", self.rootPane)
+        j.add("userData", self.userData)
+        return j.serialize()

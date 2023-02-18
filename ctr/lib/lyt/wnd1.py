@@ -1,4 +1,6 @@
 from ctr.util.data_stream import DataStream
+from ctr.util.serialize import JsonSerialize
+
 from ctr.lib.lyt.pan1 import Pan1
 from ctr.lib.lyt.mat1 import Mat1
 
@@ -79,7 +81,7 @@ class Wnd1(Pan1):
     def __init__(self, materials, data: DataStream = None):
         super().__init__(data)
         self.materialList = materials
-        self.layoutType = "Window"
+        self.type = "Window"
         if data is not None:
             self.read(data)
     
@@ -146,29 +148,27 @@ class Wnd1(Pan1):
         return data
 
     def __str__(self) -> str:
-        string = super().__str__() # Get parent string
-        string = string[:-1] + "," # Remove the closing brace and add a comma
-        string += f"contentOverflowLeft={self.contentOverflowLeft},"
-        string += f"contentOverflowRight={self.contentOverflowRight},"
-        string += f"contentOverflowTop={self.contentOverflowTop},"
-        string += f"contentOverflowBottom={self.contentOverflowBottom},"
-        string += f"frameCount={self.frameCount},"
-        string += f"flag={self.flag},"
-        string += f"padding={self.padding},"
-        string += f"windowContentOffset={self.windowContentOffset},"
-        string += f"windowFrameOffset={self.windowFrameOffset},"
-        string += f"colorTopLeft={self.colorTopLeft},"
-        string += f"colorTopRight={self.colorTopRight},"
-        string += f"colorBottomLeft={self.colorBottomLeft},"
-        string += f"colorBottomRight={self.colorBottomRight},"
-        string += f"materialId={self.materialId},"
-        string += f"textureCoordCount={self.textureCoordCount},"
-        string += f"materialName={self.materialName},"
-        string += f"textureCoords={self.textureCoords},"
-        string += f"frameOffsets={self.frameOffsets},"
-        string += f"frames={self.frames}"
-        string += "}" # Add the closing brace
-        return string 
+        j = JsonSerialize(super().__str__())
+        j.add("contentOverflowLeft", self.contentOverflowLeft)
+        j.add("contentOverflowRight", self.contentOverflowRight)
+        j.add("contentOverflowTop", self.contentOverflowTop)
+        j.add("contentOverflowBottom", self.contentOverflowBottom)
+        j.add("frameCount", self.frameCount)
+        j.add("flag", self.flag)
+        j.add("padding", self.padding)
+        j.add("windowContentOffset", self.windowContentOffset)
+        j.add("windowFrameOffset", self.windowFrameOffset)
+        j.add("colorTopLeft", self.colorTopLeft)
+        j.add("colorTopRight", self.colorTopRight)
+        j.add("colorBottomLeft", self.colorBottomLeft)
+        j.add("colorBottomRight", self.colorBottomRight)
+        j.add("materialId", self.materialId)
+        j.add("textureCoordCount", self.textureCoordCount)
+        j.add("materialName", self.materialName)
+        j.add("textureCoords", self.textureCoords)
+        j.add("frameOffsets", self.frameOffsets)
+        j.add("frames", self.frames)
+        return j.serialize()
 
 class WND1Frame():
 
