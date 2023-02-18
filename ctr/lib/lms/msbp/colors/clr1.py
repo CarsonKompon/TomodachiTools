@@ -1,6 +1,6 @@
-from util.data_stream import DataStream
+from ctr.util.data_stream import DataStream
 
-from util.blockutil import block
+from ctr.util.blockutil import block
 
 class CLR1:
     "A class representing a CLR1, color RGBA data block"

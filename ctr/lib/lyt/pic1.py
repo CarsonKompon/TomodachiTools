@@ -74,3 +74,15 @@ class Pic1(Pan1):
             self.textureCoords.append(coord)
         
         return data
+
+    def __str__(self) -> str:
+        string = super().__str__() # Get parent string
+        string = string[:-1] + "," # Remove the closing brace and add a comma
+        string += "vertexColorTopLeft: " + str(self.vertexColorTopLeft) + ","
+        string += "vertexColorTopRight: " + str(self.vertexColorTopRight) + ","
+        string += "vertexColorBottomLeft: " + str(self.vertexColorBottomLeft) + ","
+        string += "vertexColorBottomRight: " + str(self.vertexColorBottomRight) + ","
+        string += "materialId: " + str(self.materialId) + ","
+        string += "textureCoordCount: " + str(self.textureCoordCount) + ","
+        string += "textureCoords: " + str(self.textureCoords) + "}"
+        return string 

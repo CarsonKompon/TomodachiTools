@@ -1,10 +1,10 @@
-from util.data_stream import DataStream
+from ctr.util.data_stream import DataStream
 
-from lib.lms.msbp.colors.clb1 import CLB1
-from lib.lms.msbp.colors.clr1 import CLR1
+from ctr.lib.lms.msbp.colors.clb1 import CLB1
+from ctr.lib.lms.msbp.colors.clr1 import CLR1
 
-from lib.lms.msbp.attributes.ati2 import ATI2
-from lib.lms.msbp.attributes.alb1 import ALB1
+from ctr.lib.lms.msbp.attributes.ati2 import ATI2
+from ctr.lib.lms.msbp.attributes.alb1 import ALB1
 
 
 class Msbp:

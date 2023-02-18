@@ -70,12 +70,12 @@ class Mat1Material:
         self.name = data.read_string(0x14).replace("\0", "")
 
         # Read the next 4 bytes to get the flags
-        tevColor = data.read_color_rgba8()
+        self.tevColor = data.read_color_rgba8()
 
         # Read the 6 constant colors
-        tevConstantColors = []
-        for i in range(6):
-            tevConstantColors.append(data.read_color_rgba8())
+        self.tevConstantColors = []
+        for _ in range(6):
+            self.tevConstantColors.append(data.read_color_rgba8())
         
         # Read the next 4 bytes to get the flags
         self.flags = data.read_uint32()
@@ -95,11 +95,98 @@ class Mat1Material:
 
         # Loop through each texture map
         self.texMaps = []
-        for i in range(self.texMapCount):
+        for _ in range(self.texMapCount):
             # Read the texture map
             texMap = TexMap(data)
             data = texMap.read(data)
             self.texMaps.append(texMap)
+        
+        # Loop through each texture SRT
+        self.texSRTs = []
+        for _ in range(self.texMtxCount):
+            # Read the texture SRT
+            texSRT = TexSRT(data)
+            data = texSRT.read(data)
+            self.texSRTs.append(texSRT)
+        
+        # Loop through each texture coordinate
+        self.texCoords = []
+        for _ in range(self.texCoordGenCount):
+            # Read the texture coordinate
+            texCoord = TexCoordGen(data)
+            data = texCoord.read(data)
+            self.texCoords.append(texCoord)
+        
+        # Loop through each tev stage
+        self.tevStages = []
+        for _ in range(self.tevStageCount):
+            # Read the tev stage
+            tevStage = TevStage(data)
+            data = tevStage.read(data)
+            self.tevStages.append(tevStage)
+        
+        # Read the alpha compare
+        if self.hasAlphaCompare:
+            self.alphaCompare = AlphaCompare(data)
+            data = self.alphaCompare.read(data)
+        
+        # Read the blend mode
+        if self.hasBlendMode:
+            self.blendModeBlend = BlendMode(data)
+            data = self.blendModeBlend.read(data)
+        
+        # Read the logic blend mode
+        if self.separateBlendMode:
+            self.blendModeLogic = BlendMode(data)
+            data = self.blendModeLogic.read(data)
+        
+        # Read the indirect parameter
+        if self.hasIndParam:
+            self.indParam = IndirectParameter(data)
+            data = self.indParam.read(data)
+        
+        # Read the projection texture generation parameters
+        self.projTextGenParam = []
+        for _ in range(self.projTextGenParamCount):
+            # Read the projection texture generation parameter
+            projTextGenParam = ProjectionTexGenParam(data)
+            data = projTextGenParam.read(data)
+            self.projTextGenParam.append(projTextGenParam)
+        
+        # Read the font shadow parameter
+        if self.hasFontShadowParam:
+            self.fontShadowParam = FontShadowParameter(data)
+            data = self.fontShadowParam.read(data)
+    
+    def __str__(self) -> str:
+        string = "{"
+        string += f"name: {self.name},"
+        string += f"tevColor: {self.tevColor},"
+        string += f"tevConstantColors: {self.tevConstantColors},"
+        string += f"flags: {self.flags},"
+        string += f"texMapCount: {self.texMapCount},"
+        string += f"texMtxCount: {self.texMtxCount},"
+        string += f"texCoordGenCount: {self.texCoordGenCount},"
+        string += f"tevStageCount: {self.tevStageCount},"
+        string += f"hasAlphaCompare: {self.hasAlphaCompare},"
+        string += f"hasBlendMode: {self.hasBlendMode},"
+        string += f"useTextureOnly: {self.useTextureOnly},"
+        string += f"separateBlendMode: {self.separateBlendMode},"
+        string += f"hasIndParam: {self.hasIndParam},"
+        string += f"projTextGenParamCount: {self.projTextGenParamCount},"
+        string += f"hasFontShadowParam: {self.hasFontShadowParam},"
+        string += f"texMaps: {self.texMaps},"
+        string += f"texSRTs: {self.texSRTs},"
+        string += f"texCoords: {self.texCoords},"
+        string += f"tevStages: {self.tevStages},"
+        string += f"alphaCompare: {self.alphaCompare},"
+        string += f"blendModeBlend: {self.blendModeBlend},"
+        string += f"blendModeLogic: {self.blendModeLogic},"
+        string += f"indParam: {self.indParam},"
+        string += f"projTextGenParam: {self.projTextGenParam},"
+        string += f"fontShadowParam: {self.fontShadowParam}"
+        string += "}"
+        return string
 
 class Mat1:
     """A MAT1 section in a CTR file"""
@@ -130,7 +217,7 @@ class Mat1:
 
         # Loop through each material
         self.sectionOffsets = []
-        for i in range(self.materialCount):
+        for _ in range(self.materialCount):
             # Read the next 4 bytes to get the section offset
             self.sectionOffsets.append(data.read_uint32())
         
@@ -138,7 +225,7 @@ class Mat1:
         self.materials = []
         for offset in self.sectionOffsets:
             # Seek to the offset
-            data.seek(startPos + offset)
+            data.seek(curPos + offset)
             # Read the material
             material = Mat1Material(data)
             data = material.read(data)
@@ -147,3 +234,12 @@ class Mat1:
         data.seek(startPos + self.sectionSize)
 
         return data
+    
+    def __str__(self) -> str:
+        string = "{"
+        string += f"sectionSize: {self.sectionSize}, "
+        string += f"materialCount: {self.materialCount}, "
+        string += f"sectionOffsets: {self.sectionOffsets}, "
+        string += f"materials: {self.materials}"
+        string += "}"
+        return string

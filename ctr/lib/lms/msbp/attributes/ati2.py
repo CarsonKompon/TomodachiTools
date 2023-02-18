@@ -1,6 +1,6 @@
-from util.data_stream import DataStream
+from ctr.util.data_stream import DataStream
 
-from util.blockutil import block
+from ctr.util.blockutil import block
 
 class ATI2:
     "A class representing the attribute information block "

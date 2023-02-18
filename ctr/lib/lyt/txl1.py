@@ -58,8 +58,8 @@ class Txl1:
     
     def __str__(self) -> str:
         string = "{"
-        string += f"sectionSize: {self.sectionSize}, "
-        string += f"textureCount: {self.textureCount}, "
+        string += f"sectionSize: {self.sectionSize},"
+        string += f"textureCount: {self.textureCount},"
         string += f"strings: {self.strings}"
         string += "}"
         return string

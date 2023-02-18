@@ -103,3 +103,23 @@ class Txt1(Pan1):
         data.seek(startPos + self.sectionSize)
 
         return data
+
+    def __str__(self):
+        string = "{"
+        string += f"bufferLength: {self.bufferLength}, "
+        string += f"stringLength: {self.stringLength}, "
+        string += f"materialIdx: {self.materialIdx}, "
+        string += f"fontNum: {self.fontNum}, "
+        string += f"anotherOrigin: {self.anotherOrigin}, "
+        string += f"alignment: {self.alignment}, "
+        string += f"unknown: {self.unknown}, "
+        string += f"textOffset: {self.textOffset}, "
+        string += f"topColor: {self.topColor}, "
+        string += f"bottomColor: {self.bottomColor}, "
+        string += f"sizeX: {self.sizeX}, "
+        string += f"sizeY: {self.sizeY}, "
+        string += f"characterSize: {self.characterSize}, "
+        string += f"lineSize: {self.lineSize}, "
+        string += f"string: {self.string}"
+        string += "}"
+        return string
