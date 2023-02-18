@@ -1,28 +1,28 @@
-from ctr.util.data_stream import DataStream
+from util.data_stream import DataStream
 
+from util.blockutil import block
 
 class CLR1:
     "A class representing a CLR1, color RGBA data block"
 
     def __init__(self, data: DataStream = None):
+        self.data = data
+        self.clr1Block = block(data)
         self.colors = []
-        if data is not None:
-            self.read(data)
 
-    def read(self, data: DataStream) -> None:
+    def read(self) -> None:
         """Reads the CLR1 section from a data stream"""
-        self.sectionSize = data.read_int32()
+        self.sectionSize = self.data.read_int32()
 
         # Skip padding
-        data.read_bytes(8)
-        self.numberOfColors = data.read_int32()
+        self.data.read_bytes(8)
+        self.numberOfColors = self.data.read_int32()
 
         for _ in range(self.numberOfColors):
-            color = data.read_color_rgba8()
+            color = self.data.read_color_rgba8()
             self.colors.append(color)
 
-        # Seek to the end of the section
-        data.read_bytes(4)
-        return data
+        self.clr1Block.seekToEndOfSection(self.data)
+        return self.data
 
 

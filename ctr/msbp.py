@@ -1,18 +1,19 @@
-from ctr.util.data_stream import DataStream
+from util.data_stream import DataStream
 
-from ctr.lib.lms.msbp.colors.clb1 import CLB1
-from ctr.lib.lms.msbp.colors.clr1 import CLR1
+from lib.lms.msbp.colors.clb1 import CLB1
+from lib.lms.msbp.colors.clr1 import CLR1
+
+from lib.lms.msbp.attributes.ati2 import ATI2
+from lib.lms.msbp.attributes.alb1 import ALB1
 
 
 class Msbp:
     "A class to repersent a Message Studio Binary Project file"
 
     def __init__(self, filepath: str = None):
-        if filepath is not None:
-            self.parse(filepath)
-
-    def parse(self, filepath: str):
         self.filepath = filepath
+
+    def parse(self) -> None:
         with open(self.filepath, "rb") as d:
             # Parsing the header
             data = DataStream(d)
@@ -60,16 +61,23 @@ class Msbp:
             # Skip to the start of the MSBP data
             data.read_bytes(10)
 
-            for _ in range(self.numberOfChunks):
+            for _ in range(4):
                 magic = data.read_string(4)
-
                 match magic:
                     case "CLR1":
-                        self.clr1 = CLR1()
-                        data = self.clr1.read(data)
+                        self.clr1 = CLR1(data)
+                        data = self.clr1.read()
                     case "CLB1":
-                        self.clb1 = CLB1()
-                        data = self.clb1.read(data)
+                        self.clb1 = CLB1(data)
+                        data = self.clb1.read()
+                    case "ATI2":
+                        self.ati2 = ATI2(data)
+                        data = self.ati2.read()
+                    case "ALB1":
+                        self.alb1 = ALB1(data)
+                        data = self.alb1.read()
+                    case "ALI2":
+                        pass
                     case "TAG2":
                         pass
                     case "TGG2":
@@ -79,10 +87,4 @@ class Msbp:
                     case "SLB1":
                         pass
                     case "SYL3":
-                        pass
-                    case "ALB1":
-                        pass
-                    case "ALI2":
-                        pass
-                    case "ATI2":
                         pass
