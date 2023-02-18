@@ -2,6 +2,9 @@
 *.bclyt
 *.clyt
 
+# Working folder
+working/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
