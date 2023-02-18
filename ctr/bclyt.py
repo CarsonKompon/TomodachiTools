@@ -34,6 +34,7 @@ class Bclyt(LayoutBase):
     fontList: Fnl1 = None
     materialList: Mat1 = None
     layout = None
+    rootPane = None
     rootGroup = None
     userDataEntries = None
 
@@ -120,7 +121,7 @@ class Bclyt(LayoutBase):
 
                         # Set the root pane if it hasn't been set already
                         if not isRootPaneSet:
-                            self.rootPane = self.layout
+                            self.rootPane = pane
                             isRootPaneSet = True
                         
                         if layoutParent is not None:
@@ -233,20 +234,21 @@ class Bclyt(LayoutBase):
     
     def __str__(self) -> str:
         string = "{"
-        string += f"filepath: {self.filepath}, "
-        string += f"signature: {self.signature}, "
-        string += f"byteOrderMark: {self.byteOrderMark}, "
-        string += f"headerLength: {self.headerLength}, "
-        string += f"revision: {self.revision}, "
-        string += f"fileSize: {self.fileSize}, "
-        string += f"sectionCount: {self.sectionCount}, "
-        string += f"padding: {self.padding}, "
-        string += f"layoutParams: {str(self.layoutParams)}, "
-        string += f"textureList: {str(self.textureList)}, "
-        string += f"fontList: {str(self.fontList)}, "
-        string += f"materialList: {str(self.materialList)}, "
-        string += f"layout: {self.layout}, "
-        string += f"rootGroup: {self.rootGroup}, "
+        string += f"filepath: {self.filepath},"
+        string += f"signature: {self.signature},"
+        string += f"byteOrderMark: {self.byteOrderMark},"
+        string += f"headerLength: {self.headerLength},"
+        string += f"revision: {self.revision},"
+        string += f"fileSize: {self.fileSize},"
+        string += f"sectionCount: {self.sectionCount},"
+        string += f"padding: {self.padding},"
+        string += f"layoutParams: {str(self.layoutParams)},"
+        string += f"textureList: {str(self.textureList)},"
+        string += f"fontList: {str(self.fontList)},"
+        string += f"materialList: {str(self.materialList)},"
+        string += f"layout: {self.layout},"
+        string += f"rootPane: {self.rootPane},"
+        string += f"rootGroup: {self.rootGroup},"
         string += f"userDataEntries: {self.userDataEntries}"
         string += "}"
         return string
