@@ -5,6 +5,7 @@ from ctr.lib.lms.msbp.colors.clr1 import CLR1
 
 from ctr.lib.lms.msbp.attributes.ati2 import ATI2
 from ctr.lib.lms.msbp.attributes.alb1 import ALB1
+from ctr.lib.lms.msbp.attributes.ali2 import ALI2
 
 
 class Msbp:
@@ -77,10 +78,11 @@ class Msbp:
                         self.alb1 = ALB1(data)
                         data = self.alb1.read()
                     case "ALI2":
+                        self.ali2 = ALI2(data)
+                        data = self.ali2.read()
+                    case "TGG2":
                         pass
                     case "TAG2":
-                        pass
-                    case "TGG2":
                         pass
                     case "TGL2":
                         pass
