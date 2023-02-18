@@ -100,7 +100,7 @@ class Txt1(Pan1):
             self.string = data.read_string(self.stringLength)
         
         # Seek to the end of the section
-        data.seek(startPos + self.sectionSize)
+        data.seek(startPos + self.bufferLength)
 
         return data
 

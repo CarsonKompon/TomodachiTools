@@ -16,7 +16,6 @@ Notes: Some libs such as "flyte" read 2 uint16s at offset 0x08 and mark the seco
 class Txl1:
     """A TXL1 section in a CTR file"""
 
-    sectionSize: int = None
     textureCount: int = None
     strings: list[str] = []
 
@@ -31,7 +30,7 @@ class Txl1:
         startPos = data.tell() - 4
 
         # Read the first 4 bytes to get the section size
-        self.sectionSize = data.read_uint32()
+        sectionSize = data.read_uint32()
 
         # Read the next 4 bytes to get the texture count
         self.textureCount = data.read_uint32()
@@ -48,7 +47,7 @@ class Txl1:
             self.strings.append(data.read_string_nt_from(curPos + offset))
         
         # Seek to the end of the section
-        data.seek(startPos + self.sectionSize)
+        data.seek(startPos + sectionSize)
 
         return data
     
@@ -58,7 +57,6 @@ class Txl1:
     
     def __str__(self) -> str:
         string = "{"
-        string += f"sectionSize: {self.sectionSize},"
         string += f"textureCount: {self.textureCount},"
         string += f"strings: {self.strings}"
         string += "}"

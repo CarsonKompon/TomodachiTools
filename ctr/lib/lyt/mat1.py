@@ -191,7 +191,6 @@ class Mat1Material:
 class Mat1:
     """A MAT1 section in a CTR file"""
 
-    sectionSize: int = None
     materialCount: int = None
     sectionOffsets: list[int] = None
     materials: list[Mat1Material] = None
@@ -207,7 +206,7 @@ class Mat1:
         startPos = data.tell() - 4
 
         # Read the first 4 bytes to get the section size
-        self.sectionSize = data.read_uint32()
+        sectionSize = data.read_uint32()
 
         # Read the next 4 bytes to get the texture count
         self.materialCount = data.read_uint32()
@@ -231,15 +230,14 @@ class Mat1:
             data = material.read(data)
         
         # Seek to the end of the section
-        data.seek(startPos + self.sectionSize)
+        data.seek(startPos + sectionSize)
 
         return data
     
     def __str__(self) -> str:
         string = "{"
-        string += f"sectionSize: {self.sectionSize}, "
-        string += f"materialCount: {self.materialCount}, "
-        string += f"sectionOffsets: {self.sectionOffsets}, "
+        string += f"materialCount: {self.materialCount},"
+        string += f"sectionOffsets: {self.sectionOffsets},"
         string += f"materials: {self.materials}"
         string += "}"
         return string

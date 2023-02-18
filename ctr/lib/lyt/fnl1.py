@@ -16,7 +16,6 @@ Notes: Some libs such as "flyte" read 2 uint16s at offset 0x08 and mark the seco
 class Fnl1:
     """A FNL1 section in a CTR file"""
 
-    sectionSize: int = None
     fontCount: int = None
     strings: list[str] = []
 
@@ -31,7 +30,7 @@ class Fnl1:
         startPos = data.tell() - 4
 
         # Read the first 4 bytes to get the section size
-        self.sectionSize = data.read_uint32()
+        sectionSize = data.read_uint32()
 
         # Read the next 4 bytes to get the texture count
         self.fontCount = data.read_uint32()
@@ -48,7 +47,14 @@ class Fnl1:
             self.strings.append(data.read_string_nt_from(curPos + offset))
         
         # Seek to the end of the section
-        data.seek(startPos + self.sectionSize)
+        data.seek(startPos + sectionSize)
 
         return data
+    
+    def __str__(self) -> str:
+        string = "{" + f"fontCount: {self.fontCount}, strings: ["
+        for i in range(self.fontCount):
+            string += f"{self.strings[i]},"
+        string = string[:-1] + "]}"
+        return string
 

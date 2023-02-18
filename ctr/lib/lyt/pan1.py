@@ -27,7 +27,6 @@ Offset |  Size  |   Type   | Description
 class Pan1(LayoutBase):
     """A PAN1 section in a CTR file"""
 
-    sectionSize: int = None
     flags: int = None
     isVisible: bool = None
     influencedAlpha: bool = None
@@ -57,7 +56,7 @@ class Pan1(LayoutBase):
         startPos = data.tell() - 4
 
         # Read in the section size as a 32-bit unsigned integer
-        self.sectionSize = data.read_uint32()
+        sectionSize = data.read_uint32()
 
         # Read in the flags as a single byte and determine the boolean values from it
         self.flags = data.read_uint8()
@@ -86,13 +85,12 @@ class Pan1(LayoutBase):
         self.width = data.read_float()
 
         # Seek to the end of the section
-        data.seek(startPos + self.sectionSize)
+        data.seek(startPos + sectionSize)
 
         return data
     
     def __str__(self) -> str:
         json = "{"
-        json += f'"sectionSize": {self.sectionSize},'
         json += f'"flags": {self.flags},'
         json += f'"isVisible": {self.isVisible},'
         json += f'"influencedAlpha": {self.influencedAlpha},'

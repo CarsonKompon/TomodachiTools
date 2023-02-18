@@ -153,6 +153,13 @@ class Bclyt(LayoutBase):
                             txt.parent = layoutParent
                         
                         layoutPrevious = txt
+                    case 'usd1':
+                        # Pass the data to a new Usd1 class to create a new user data
+                        usd = Usd1()
+                        data = usd.read(data)
+
+                        if layoutPrevious is not None:
+                            layoutPrevious.add_user_data(usd)
                     # TODO: Add usd1, wnd1, pas1, pae1, pts1, grp1, grs1, and gre1 support
                     case _:
                         print("Unknown section magic '" + str(magic) + "' at offset " + str(data.tell() - 4) + "!")

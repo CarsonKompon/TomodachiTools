@@ -24,7 +24,6 @@ class OriginType(IntEnum):
 class Lyt1:
     """A LYT1 section in a CTR file"""
 
-    sectionSize: int = None
     originType: OriginType = OriginType.CLASSIC
     canvasSize: tuple[int, int] = (0, 0)
 
@@ -39,7 +38,7 @@ class Lyt1:
         startPos = data.tell() - 4
 
         # Read the first 4 bytes to get the section size
-        self.sectionSize = data.read_uint32()
+        sectionSize = data.read_uint32()
 
         # Read the next 4 bytes to get the origin type
         self.originType = data.read_uint32()
@@ -48,14 +47,13 @@ class Lyt1:
         self.canvasSize = data.read_vector2()
 
         # Seek to the end of the section
-        data.seek(startPos + self.sectionSize)
+        data.seek(startPos + sectionSize)
 
         return data
     
     def __str__(self) -> str:
         json = "{"
-        json += f'"sectionSize": {self.sectionSize}, '
-        json += f'"originType": {self.originType}, '
+        json += f'"originType": {self.originType},'
         json += f'"canvasSize": {self.canvasSize}'
         json += "}"
         return json
