@@ -83,21 +83,21 @@ class DataStream:
         """Reads a 3D vector from the stream (32-bit floats for the x, y and z values)."""
         return (self.read_float(), self.read_float(), self.read_float())
 
-    def read_color_rgba8(self) -> tuple:
+    def read_color_rgba8(self, asHex=False) -> tuple or str:
         """Reads a RGBA8 color from the stream."""
-        return (self.read_bytes(1), self.read_bytes(1), self.read_bytes(1), self.read_bytes(1))
+        return struct.unpack('BBBB', self.read_bytes(4)) if not asHex else self.read_bytes(4).hex()
     
-    def read_color_rgb8(self) -> tuple:
+    def read_color_rgb8(self, asHex=False) -> tuple or str:
         """Reads a RGB8 color from the stream."""
-        return (self.read_bytes(1), self.read_bytes(1), self.read_bytes(1))
-    
-    def read_color_rgba16(self) -> tuple:
+        return struct.unpack('BBB', self.read_bytes(3)) if not asHex else self.read_bytes(3).hex()
+
+    def read_color_rgba16(self, asHex=False) -> tuple or str:
         """Reads a RGBA16 color from the stream."""
-        return (self.read_bytes(2), self.read_bytes(2), self.read_bytes(2), self.read_bytes(2))
-    
-    def read_color_rgb16(self) -> tuple:
+        return struct.unpack('BBBBBBBB', self.read_bytes(8)) if not asHex else self.read_bytes(8).hex()
+
+    def read_color_rgb16(self, asHex=False) -> tuple or str:
         """Reads a RGB16 color from the stream."""
-        return (self.read_bytes(2), self.read_bytes(2), self.read_bytes(2))
+        return struct.unpack('BBBBBB', self.read_bytes(6)) if not asHex else self.read_bytes(6).hex()
 
     def tell(self) -> int:
         """Returns the current position of the stream."""
