@@ -91,7 +91,7 @@ class Pan1(LayoutBase):
         return data
     
     def __str__(self) -> str:
-        json = "{"
+        json = super().__str__()[:-1] + ","
         json += f'"flags": {self.flags},'
         json += f'"isVisible": {self.isVisible},'
         json += f'"influencedAlpha": {self.influencedAlpha},'
