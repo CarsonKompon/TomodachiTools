@@ -62,10 +62,10 @@ class Wnd1(Pan1):
 
     windowContentOffset: int = None
     windowFrameOffset: int = None
-    colorTopLeft: tuple(int, int, int, int) = None
-    colorTopRight: tuple(int, int, int, int) = None
-    colorBottomLeft: tuple(int, int, int, int) = None
-    colorBottomRight: tuple(int, int, int, int) = None
+    colorTopLeft: tuple[int, int, int, int] = None
+    colorTopRight: tuple[int, int, int, int] = None
+    colorBottomLeft: tuple[int, int, int, int] = None
+    colorBottomRight: tuple[int, int, int, int] = None
     materialId: int = None
     textureCoordCount: int = None
 
@@ -148,13 +148,26 @@ class Wnd1(Pan1):
     def __str__(self) -> str:
         string = super().__str__() # Get parent string
         string = string[:-1] + "," # Remove the closing brace and add a comma
-        string += "vertexColorTopLeft: " + str(self.vertexColorTopLeft) + ","
-        string += "vertexColorTopRight: " + str(self.vertexColorTopRight) + ","
-        string += "vertexColorBottomLeft: " + str(self.vertexColorBottomLeft) + ","
-        string += "vertexColorBottomRight: " + str(self.vertexColorBottomRight) + ","
-        string += "materialId: " + str(self.materialId) + ","
-        string += "textureCoordCount: " + str(self.textureCoordCount) + ","
-        string += "textureCoords: " + str(self.textureCoords) + "}"
+        string += f"contentOverflowLeft={self.contentOverflowLeft},"
+        string += f"contentOverflowRight={self.contentOverflowRight},"
+        string += f"contentOverflowTop={self.contentOverflowTop},"
+        string += f"contentOverflowBottom={self.contentOverflowBottom},"
+        string += f"frameCount={self.frameCount},"
+        string += f"flag={self.flag},"
+        string += f"padding={self.padding},"
+        string += f"windowContentOffset={self.windowContentOffset},"
+        string += f"windowFrameOffset={self.windowFrameOffset},"
+        string += f"colorTopLeft={self.colorTopLeft},"
+        string += f"colorTopRight={self.colorTopRight},"
+        string += f"colorBottomLeft={self.colorBottomLeft},"
+        string += f"colorBottomRight={self.colorBottomRight},"
+        string += f"materialId={self.materialId},"
+        string += f"textureCoordCount={self.textureCoordCount},"
+        string += f"materialName={self.materialName},"
+        string += f"textureCoords={self.textureCoords},"
+        string += f"frameOffsets={self.frameOffsets},"
+        string += f"frames={self.frames}"
+        string += "}" # Add the closing brace
         return string 
 
 class WND1Frame():

@@ -12,6 +12,7 @@ from ctr.lib.lyt.pic1 import Pic1
 from ctr.lib.lyt.txt1 import Txt1
 from ctr.lib.lyt.usd1 import Usd1
 from ctr.lib.lyt.wnd1 import Wnd1
+from ctr.lib.lyt.grp1 import Grp1
 from ctr.clyt import Clyt
 
 class Bclyt(LayoutBase):
@@ -90,6 +91,8 @@ class Bclyt(LayoutBase):
             # Set some variables
             layoutPrevious: LayoutBase = None
             layoutParent: LayoutBase = None
+            groupPrevious: LayoutBase = None
+            groupParent: LayoutBase = None
             isRootPaneSet = False
             isRootGroupSet = False
 
@@ -172,7 +175,42 @@ class Bclyt(LayoutBase):
                             wnd.parent = layoutParent
                         
                         layoutPrevious = wnd
-                    # TODO: Add usd1, wnd1, pas1, pae1, pts1, grp1, grs1, and gre1 support
+                    case 'pas1':
+                        if layoutPrevious is not None:
+                            layoutParent = layoutPrevious
+                        
+                        data.read_uint32() # Unknown?
+                    case 'pae1':
+                        layoutPrevious = layoutParent
+                        layoutParent = layoutPrevious.parent
+
+                        data.read_uint32() # Unknown?
+                    case 'pts1':
+                        print("PTS1 found! These are seemingly unknown/undocumented... Please let one of the contributors know about this!")
+                    case 'grp1':
+                        # Pass the data to a new Grp1 class to create a new group
+                        grp = Grp1()
+                        data = grp.read(data)
+
+                        if not isRootGroupSet:
+                            self.rootGroup = grp
+                            isRootGroupSet = True
+                        
+                        if groupParent is not None:
+                            groupParent.add_child(grp)
+                            grp.parent = groupParent
+                        
+                        groupPrevious = grp
+                    case 'grs1':
+                        if groupPrevious is not None:
+                            groupParent = groupPrevious
+
+                        data.read_uint32() # Unknown?
+                    case 'gre1':
+                        groupPrevious = groupParent
+                        groupParent = groupPrevious.parent
+
+                        data.read_uint32() # Unknown?
                     case _:
                         print("Unknown section magic '" + str(magic) + "' at offset " + str(data.tell() - 4) + "!")
 
