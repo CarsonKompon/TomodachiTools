@@ -69,7 +69,6 @@ class Mat1Material:
 
         # Read the first 20 bytes to get the material name
         self.name = data.read_string(0x14).replace("\0", "")
-        print(self.name)
 
         # Read the next few bytes to get the tev color
         self.tevColor = data.read_color_rgba8()

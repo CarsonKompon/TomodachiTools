@@ -36,7 +36,6 @@ class Bclyt(LayoutBase):
     layout = None
     rootPane = None
     rootGroup = None
-    userDataEntries = None
 
     def __init__(self, filepath: str = None):
         self.type = 'Layout'
@@ -97,6 +96,9 @@ class Bclyt(LayoutBase):
             groupParent: LayoutBase = None
             isRootPaneSet = False
             isRootGroupSet = False
+
+            # Clear the children of the layout
+            self.children = []
 
             # Loop through each section
             for _ in range(self.sectionCount):
@@ -228,16 +230,44 @@ class Bclyt(LayoutBase):
         # TODO: Implement a BCLYT to CLYT converter once the Clyt class is implemented
     
     def __str__(self) -> str:
-        j = JsonSerialize(super().__str__())
+        j = JsonSerialize()
+
+        # Add header information
         j.add("byteOrderMark", self.byteOrderMark)
         j.add("headerLength", self.headerLength)
         j.add("revision", self.revision)
         j.add("fileSize", self.fileSize)
         j.add("sectionCount", self.sectionCount)
         j.add("layoutParams", self.layoutParams)
-        j.add("textureList", self.textureList)
-        j.add("fontList", self.fontList)
-        j.add("materialList", self.materialList)
-        j.add("rootPane", self.rootPane)
-        j.add("rootGroup", self.rootGroup)
+
+        # Add the texture list if it exists
+        if self.textureList is not None:
+            j.add("textureList", self.textureList)
+        else:
+            j.add("textureList", [])
+        
+        # Add the font list if it exists
+        if self.fontList is not None:
+            j.add("fontList", self.fontList)
+        else:
+            j.add("fontList", [])
+        
+        # Add the material list if it exists
+        if self.materialList is not None:
+            j.add("materialList", self.materialList)
+        else:
+            j.add("materialList", [])
+        
+        # Add the root pane if it exists
+        if self.rootPane is not None:
+            j.add("rootPane", self.rootPane)
+        else:
+            j.add("rootPane", [])
+        
+        # Add the root group if it exists
+        if self.rootGroup is not None:
+            j.add("rootGroup", self.rootGroup)
+        else:
+            j.add("rootGroup", [])
+
         return j.serialize()

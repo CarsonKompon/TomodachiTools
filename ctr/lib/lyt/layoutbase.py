@@ -13,9 +13,15 @@ class LayoutBase:
 
     userData: list[Usd1] = []
 
+    def __init__(self):
+        self.children = []
+        self.userData = []
+
     def add_child(self, child):
+        print(f"Adding child {child.name} to {self.name}")
         self.children.append(child)
         child.parent = self
+        print(f"Children: {self.children}")
     
     def add_user_data(self, user_data):
         self.userData.append(user_data)
@@ -24,16 +30,7 @@ class LayoutBase:
         j = JsonSerialize()
         j.add("type", self.type)
         j.add("name", self.name)
-
-        children = []
-        if self.parent is None:
-            for child in self.children:
-                children.append(child)
-        else:
-            for child in self.children:
-                if child is not None:
-                    children.append(child.name)
-        j.add("children", children)
+        j.add("children", self.children)
         
         if self.parent is not None:
             j.add("parent", self.parent.name)
