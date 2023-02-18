@@ -64,6 +64,7 @@ class Txt1(Pan1):
         self.layoutType = "Text Box"
 
     def read(self, data: DataStream) -> DataStream:
+        data = super().read(data)
 
         # Save the start of the section
         startPos = data.tell() - 0x4C
@@ -89,10 +90,10 @@ class Txt1(Pan1):
         self.bottomColor = data.read_color_rgba8()
 
         # Read 32-bit floats
-        self.sizeX = data.read_float32()
-        self.sizeY = data.read_float32()
-        self.characterSize = data.read_float32()
-        self.lineSize = data.read_float32()
+        self.sizeX = data.read_float()
+        self.sizeY = data.read_float()
+        self.characterSize = data.read_float()
+        self.lineSize = data.read_float()
 
         # Read string
         if self.stringLength != 0:
@@ -100,7 +101,7 @@ class Txt1(Pan1):
             self.string = data.read_string(self.stringLength)
         
         # Seek to the end of the section
-        data.seek(startPos + self.bufferLength)
+        data.seek(startPos + self.sectionSize)
 
         return data
 

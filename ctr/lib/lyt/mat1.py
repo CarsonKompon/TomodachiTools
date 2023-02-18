@@ -68,8 +68,9 @@ class Mat1Material:
 
         # Read the first 20 bytes to get the material name
         self.name = data.read_string(0x14).replace("\0", "")
+        print(self.name)
 
-        # Read the next 4 bytes to get the flags
+        # Read the next few bytes to get the tev color
         self.tevColor = data.read_color_rgba8()
 
         # Read the 6 constant colors
@@ -97,7 +98,7 @@ class Mat1Material:
         self.texMaps = []
         for _ in range(self.texMapCount):
             # Read the texture map
-            texMap = TexMap(data)
+            texMap = TexMap()
             data = texMap.read(data)
             self.texMaps.append(texMap)
         
@@ -105,7 +106,7 @@ class Mat1Material:
         self.texSRTs = []
         for _ in range(self.texMtxCount):
             # Read the texture SRT
-            texSRT = TexSRT(data)
+            texSRT = TexSRT()
             data = texSRT.read(data)
             self.texSRTs.append(texSRT)
         
@@ -113,7 +114,7 @@ class Mat1Material:
         self.texCoords = []
         for _ in range(self.texCoordGenCount):
             # Read the texture coordinate
-            texCoord = TexCoordGen(data)
+            texCoord = TexCoordGen()
             data = texCoord.read(data)
             self.texCoords.append(texCoord)
         
@@ -121,42 +122,45 @@ class Mat1Material:
         self.tevStages = []
         for _ in range(self.tevStageCount):
             # Read the tev stage
-            tevStage = TevStage(data)
+            tevStage = TevStage()
             data = tevStage.read(data)
             self.tevStages.append(tevStage)
         
         # Read the alpha compare
         if self.hasAlphaCompare:
-            self.alphaCompare = AlphaCompare(data)
+            self.alphaCompare = AlphaCompare()
             data = self.alphaCompare.read(data)
         
         # Read the blend mode
         if self.hasBlendMode:
-            self.blendModeBlend = BlendMode(data)
+            self.blendModeBlend = BlendMode()
             data = self.blendModeBlend.read(data)
         
         # Read the logic blend mode
         if self.separateBlendMode:
-            self.blendModeLogic = BlendMode(data)
+            self.blendModeLogic = BlendMode()
             data = self.blendModeLogic.read(data)
         
         # Read the indirect parameter
         if self.hasIndParam:
-            self.indParam = IndirectParameter(data)
+            self.indParam = IndirectParameter()
             data = self.indParam.read(data)
         
         # Read the projection texture generation parameters
         self.projTextGenParam = []
         for _ in range(self.projTextGenParamCount):
             # Read the projection texture generation parameter
-            projTextGenParam = ProjectionTexGenParam(data)
+            projTextGenParam = ProjectionTexGenParam()
             data = projTextGenParam.read(data)
             self.projTextGenParam.append(projTextGenParam)
         
         # Read the font shadow parameter
         if self.hasFontShadowParam:
-            self.fontShadowParam = FontShadowParameter(data)
+            self.fontShadowParam = FontShadowParameter()
             data = self.fontShadowParam.read(data)
+        
+        # Return the data stream
+        return data
     
     def __str__(self) -> str:
         string = "{"
@@ -211,9 +215,6 @@ class Mat1:
         # Read the next 4 bytes to get the texture count
         self.materialCount = data.read_uint32()
 
-        # All offsets are relative to the start of the section
-        curPos = data.tell()
-
         # Loop through each material
         self.sectionOffsets = []
         for _ in range(self.materialCount):
@@ -224,9 +225,10 @@ class Mat1:
         self.materials = []
         for offset in self.sectionOffsets:
             # Seek to the offset
-            data.seek(curPos + offset)
+            data.seek(startPos + offset)
             # Read the material
-            material = Mat1Material(data)
+            material = Mat1Material()
+            self.materials.append(material)
             data = material.read(data)
         
         # Seek to the end of the section

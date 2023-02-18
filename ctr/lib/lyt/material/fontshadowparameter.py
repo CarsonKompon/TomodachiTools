@@ -42,4 +42,6 @@ class FontShadowParameter:
         self.whiteBlue = data.read_bytes(1)
         self.whiteAlpha = data.read_bytes(1)
 
+        data.read_bytes(1) # Read in padding (?)
+
         return data

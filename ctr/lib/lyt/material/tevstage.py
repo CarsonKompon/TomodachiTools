@@ -7,7 +7,7 @@ Offset |  Size  |   Type   | Description
 -------+--------+----------+------------
  0x00  |  0x01  |   byte  | RGB Mode
  0x01  |  0x01  |   byte  | Alpha Mode
- 0x02  |  0x04  |  ?????? | Unknown. In flyte this isn't even stored in a variable, but it's still read to advance the seeker (as a uint16).
+ 0x02  |  0x02  |  ?????? | Unknown. In flyte this isn't even stored in a variable, but it's still read to advance the seeker (as a uint16).
 ===================
 """
 

@@ -55,11 +55,14 @@ class Pic1(Pan1):
     def read(self, data: DataStream) -> DataStream:
         data = super().read(data)
         
+        # Get the start position
+        startPos = data.tell() - 0x4C
+
         # Read in the vertex colors
-        self.vertexColorTopLeft = data.read_color_rgba8
-        self.vertexColorTopRight = data.read_color_rgba8
-        self.vertexColorBottomLeft = data.read_color_rgba8
-        self.vertexColorBottomRight = data.read_color_rgba8
+        self.vertexColorTopLeft = data.read_color_rgba8()
+        self.vertexColorTopRight = data.read_color_rgba8()
+        self.vertexColorBottomLeft = data.read_color_rgba8()
+        self.vertexColorBottomRight = data.read_color_rgba8()
 
         # Read in the material ID and texture coordinate count as unsigned 16-bit integers
         self.materialId = data.read_uint16()
@@ -67,12 +70,16 @@ class Pic1(Pan1):
 
         # Read in the texture coordinates
         self.textureCoords = []
-        for i in range(self.textureCoordCount):
+        for _ in range(self.textureCoordCount):
             coord = []
-            for j in range(4):
+            for _ in range(4):
                 coord.append(data.read_vector2())
             self.textureCoords.append(coord)
         
+        # Seek to the end of the section
+        data.seek(startPos + self.sectionSize)
+
+        # Return the data stream
         return data
 
     def __str__(self) -> str:

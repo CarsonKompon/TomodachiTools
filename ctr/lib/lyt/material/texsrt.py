@@ -24,10 +24,10 @@ class TexSRT:
     def read(self, data: DataStream) -> DataStream:
         """Reads the TexMap section from a material data stream"""
 
-        # Read in each value as a 32-bit float
-        self.translation = (data.read_float(), data.read_float())
+        # Read in each value
+        self.translation = data.read_vector2()
         self.rotation = data.read_float()
-        self.scale = (data.read_float(), data.read_float())
+        self.scale = data.read_vector2()
 
         return data
     

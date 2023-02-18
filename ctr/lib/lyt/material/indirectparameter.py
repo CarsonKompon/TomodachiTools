@@ -5,8 +5,8 @@ Indirect Parameter Entry
 ===================
 Offset |  Size  |   Type   | Description
 -------+--------+----------+------------
- 0x00  |  0x08  |   float  | Rotation
- 0x08  |  0x10  |  vector2 | Scale (32-bit float, 32-bit float)
+ 0x00  |  0x04  |   float  | Rotation
+ 0x04  |  0x08  |  vector2 | Scale (32-bit float, 32-bit float)
 ===================
 """
 
@@ -26,6 +26,6 @@ class IndirectParameter:
         self.rotation = data.read_float()
 
         # Read in the scale as two 32-bit floats
-        self.scale = (data.read_float(), data.read_float())
+        self.scale = data.read_vector2()
 
         return data

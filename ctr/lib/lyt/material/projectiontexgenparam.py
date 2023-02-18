@@ -31,8 +31,8 @@ class ProjectionTexGenParam:
         """Reads the ProjectionTexGenParam section from a material data stream"""
 
         # Read in the position and scale as vectors consiting of two 32-bit floats each
-        self.position = (data.read_float(), data.read_float())
-        self.scale = (data.read_float(), data.read_float())
+        self.position = data.read_vector2()
+        self.scale = data.read_vector2()
 
         # Read in the flags as a byte
         flags = data.read_bytes(1)

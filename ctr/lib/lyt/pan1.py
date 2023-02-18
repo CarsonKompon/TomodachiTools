@@ -40,6 +40,7 @@ class Pan1(LayoutBase):
     adjustToPartsBounds: bool = None
 
     name: str = None
+    dataString: str = None
     position: tuple[float, float, float] = None
     rotation: tuple[float, float, float] = None
     scale: tuple[float, float] = None
@@ -61,9 +62,9 @@ class Pan1(LayoutBase):
 
         # Read in the flags as a single byte and determine the boolean values from it
         self.flags = data.read_uint8()
-        self.isVisible = extract_bits(self.flags, 1, 0)
-        self.influencedAlpha = extract_bits(self.flags, 1, 1)
-        self.locationAdjustment = extract_bits(self.flags, 1, 2)
+        self.isVisible = extract_bits(self.flags, 1, 0) == 1
+        self.influencedAlpha = extract_bits(self.flags, 1, 1) == 1
+        self.locationAdjustment = extract_bits(self.flags, 1, 2) == 1
 
         # Read in the origin, alpha, and panemagflags as single bytes
         self.origin = data.read_uint8()
@@ -74,8 +75,11 @@ class Pan1(LayoutBase):
         self.ignorePartsMagnify = extract_bits(self.magFlags, 1, 0)
         self.adjustToPartsBounds = extract_bits(self.magFlags, 1, 1)
 
-        # Read in the name as a string of length 0x18
-        self.name = data.read_string(0x18).replace("\0", "")
+        # Read in the name as a string of length 0x10
+        self.name = data.read_string(0x10).replace("\0", "")
+
+        # Read in the data as a string of length 0x8
+        self.dataString = data.read_string(0x8).replace("\0", "")
 
         # Read in the position and rotation as vector3s
         self.position = data.read_vector3()
@@ -86,7 +90,7 @@ class Pan1(LayoutBase):
         self.width = data.read_float()
 
         # Seek to the end of the section
-        data.seek(startPos + self.sectionSize)
+        data.seek(startPos + 0x4C)
 
         return data
     

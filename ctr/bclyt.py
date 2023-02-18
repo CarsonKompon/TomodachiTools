@@ -98,7 +98,7 @@ class Bclyt(LayoutBase):
             isRootGroupSet = False
 
             # Loop through each section
-            for i in range(self.sectionCount):
+            for _ in range(self.sectionCount):
                 # Read the next 4 bytes to get the magic
                 magic = data.read_string(4)
                 match magic:
@@ -118,7 +118,7 @@ class Bclyt(LayoutBase):
                         # Pass the data to a new Pan1 class to create a new pane
                         pane = Pan1()
                         data = pane.read(data)
-
+                        
                         # Set the root pane if it hasn't been set already
                         if not isRootPaneSet:
                             self.rootPane = pane

@@ -6,8 +6,8 @@ Alpha Compare Entry
 Offset |  Size  |   Type   | Description
 -------+--------+----------+------------
  0x00  |  0x01  |   byte  | Compare Mode
- 0x01  |  0x08  |  float  | Reference Alpha
- 0x09  |  0x03  |  ?????  | Unknown. In flyte this isn't even stored in a variable, but it's still read to advance the seeker.
+ 0x01  |  0x04  |  float  | Reference Alpha
+ 0x05  |  0x03  |  ?????  | Unknown. In flyte this isn't even stored in a variable, but it's still read to advance the seeker.
 ===================
 """
 
