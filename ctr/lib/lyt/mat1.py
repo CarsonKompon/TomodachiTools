@@ -234,6 +234,10 @@ class Mat1:
 
         return data
     
+    def get_material_name_from_index(self, index: int) -> str:
+        """Gets the material name from an index"""
+        return self.materials[index].name
+
     def __str__(self) -> str:
         string = "{"
         string += f"materialCount: {self.materialCount},"

@@ -127,6 +127,10 @@ class DataStream:
         """Reads a RGB16 color from the stream."""
         return struct.unpack('BBBBBB', self.read_bytes(6)) if not asHex else self.read_bytes(6).hex()
 
+    def read_uv_coord_set(self) -> tuple:
+        """Reads a UV coordinate set from the stream (8 16-bit floats that make up the top left, top right, bottom left, and bottom right UVs)."""
+        return ((self.read_float(), self.read_float()), (self.read_float(), self.read_float()), (self.read_float(), self.read_float()), (self.read_float(), self.read_float()))
+
     def tell(self) -> int:
         """Returns the current position of the stream."""
         return self.data.tell()

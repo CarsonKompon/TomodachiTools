@@ -10,6 +10,7 @@ from ctr.lib.lyt.mat1 import Mat1
 from ctr.lib.lyt.pan1 import Pan1, Bnd1
 from ctr.lib.lyt.pic1 import Pic1
 from ctr.lib.lyt.txt1 import Txt1
+from ctr.lib.lyt.usd1 import Usd1
 from ctr.clyt import Clyt
 
 class Bclyt(LayoutBase):
@@ -160,6 +161,16 @@ class Bclyt(LayoutBase):
 
                         if layoutPrevious is not None:
                             layoutPrevious.add_user_data(usd)
+                    case 'wnd1':
+                        # Pass the data to a new Wnd1 class to create a new window
+                        wnd = Wnd1(self.materialList)
+                        data = wnd.read(data)
+
+                        if layoutParent is not None:
+                            layoutParent.add_child(wnd)
+                            wnd.parent = layoutParent
+                        
+                        layoutPrevious = wnd
                     # TODO: Add usd1, wnd1, pas1, pae1, pts1, grp1, grs1, and gre1 support
                     case _:
                         print("Unknown section magic '" + str(magic) + "' at offset " + str(data.tell() - 4) + "!")
