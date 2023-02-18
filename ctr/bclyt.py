@@ -11,6 +11,7 @@ from ctr.lib.lyt.pan1 import Pan1, Bnd1
 from ctr.lib.lyt.pic1 import Pic1
 from ctr.lib.lyt.txt1 import Txt1
 from ctr.lib.lyt.usd1 import Usd1
+from ctr.lib.lyt.wnd1 import Wnd1
 from ctr.clyt import Clyt
 
 class Bclyt(LayoutBase):
