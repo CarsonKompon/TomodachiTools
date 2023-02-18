@@ -18,7 +18,14 @@ Offset |  Size  |    Type    | Description
 -------+--------+----------+------------
  0x00  |  0x04  |   uint32   | Name Offset (Relative to the start of this entry)
  0x04  |  0x04  |   uint32   | Data Offset (Relative to the start of this entry)
-
+ 0x08  |  0x02  |   uint16   | Setting
+ 0x0A  |  0x01  |   uint8    | Type (0 = String, 1 = Int, 2 = Float)
+ 0x0B  |  0x01  |   uint8    | Unknown
+===================
+The value is then read from the data offset. The data offset is relative to the start of the entry.
+If the type is zero, then the value is a string and setting is the length of the string.
+If the type is one, then the value is an int and setting is the number of ints to read into an array.
+If the type is two, then the value is a float and setting is the number of floats to read into an array.
 """
 
 class Usd1:
