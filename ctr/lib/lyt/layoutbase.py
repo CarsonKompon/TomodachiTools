@@ -18,10 +18,8 @@ class LayoutBase:
         self.userData = []
 
     def add_child(self, child):
-        print(f"Adding child {child.name} to {self.name}")
         self.children.append(child)
         child.parent = self
-        print(f"Children: {self.children}")
     
     def add_user_data(self, user_data):
         self.userData.append(user_data)
