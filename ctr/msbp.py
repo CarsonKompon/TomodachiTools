@@ -1,11 +1,19 @@
+import json
+
 from ctr.util.data_stream import DataStream
 
-from ctr.lib.lms.msbp.colors.clb1 import CLB1
-from ctr.lib.lms.msbp.colors.clr1 import CLR1
-
-from ctr.lib.lms.msbp.attributes.ati2 import ATI2
 from ctr.lib.lms.msbp.attributes.alb1 import ALB1
 from ctr.lib.lms.msbp.attributes.ali2 import ALI2
+from ctr.lib.lms.msbp.attributes.ati2 import ATI2
+from ctr.lib.lms.msbp.colors.clb1 import CLB1
+from ctr.lib.lms.msbp.colors.clr1 import CLR1
+from ctr.lib.lms.msbp.styles.slb1 import SLB1
+from ctr.lib.lms.msbp.styles.syl3 import SYL3
+from ctr.lib.lms.msbp.tags.tag2 import TAG2
+from ctr.lib.lms.msbp.tags.tgg2 import TGG2
+from ctr.lib.lms.msbp.tags.tgl2 import TGL2
+from ctr.lib.lms.msbp.tags.tgp2 import TGP2
+from ctr.lib.lms.msbp.project.cti1 import CTI1
 
 
 class Msbp:
@@ -13,6 +21,9 @@ class Msbp:
 
     def __init__(self, filepath: str = None):
         self.filepath = filepath
+
+    def export(self, jsonFilename: str) -> None:
+        pass
 
     def parse(self) -> None:
         with open(self.filepath, "rb") as d:
@@ -51,7 +62,7 @@ class Msbp:
                 raise ValueError(
                     f"Version number is unsupported! Expected 3, got {self.version}")
 
-            self.numberOfChunks = data.read_uint16()
+            self.numberOfBlocks = data.read_uint16() + 2
 
             # Skip zeros
             data.read_bytes(2)
@@ -60,9 +71,9 @@ class Msbp:
             self.fileSize = data.read_uint32()
 
             # Skip to the start of the MSBP data
-            data.read_bytes(10)
+            data.read_bytes(2)
 
-            for _ in range(4):
+            for _ in range(0, self.numberOfBlocks):
                 magic = data.read_string(4)
                 match magic:
                     case "CLR1":
@@ -81,12 +92,23 @@ class Msbp:
                         self.ali2 = ALI2(data)
                         data = self.ali2.read()
                     case "TGG2":
-                        pass
+                        self.tgg2 = TGG2(data)
+                        data = self.tgg2.read()
                     case "TAG2":
-                        pass
+                        self.tag2 = TAG2(data)
+                        data = self.tag2.read()
+                    case "TGP2":
+                        self.tgp2 = TGP2(data)
+                        data = self.tgp2.read()
                     case "TGL2":
-                        pass
-                    case "SLB1":
-                        pass
+                        self.tgl2 = TGL2(data)
+                        data = self.tgl2.read()
                     case "SYL3":
-                        pass
+                        self.syl3 = SYL3(data)
+                        data = self.syl3.read()
+                    case "SLB1":
+                        self.slb1 = SLB1(data)
+                        data = self.slb1.read()
+                    case "CTI1":
+                        self.cti1 = CTI1(data)
+                        data = self.cti1.read()
