@@ -19,8 +19,7 @@ class TAG2:
             parameterIndex = self.data.read_uint16()
             tagParameterIndexes.append(parameterIndex)
         tag = self.data.read_string_nt()
-        entries[index] = {"Tag": tag, "parameterCount": numberOfTagParameters,
-                          "parameterIndexes": tagParameterIndexes}
+        entries[index] = {"Tag": tag, "parameterIndexes": tagParameterIndexes}
 
     def read(self):
         """Reads the TAG2 section from a data stream"""
