@@ -1,5 +1,3 @@
-import json
-
 from ctr.util.data_stream import DataStream
 
 from ctr.lib.lms.msbp.attributes.alb1 import ALB1
@@ -21,7 +19,8 @@ class Msbp:
 
     def __init__(self, filepath: str = None):
         self.filepath = filepath
-
+       
+    # TODO: Make the exporter
     def export(self, jsonFilename: str) -> None:
         pass
 
