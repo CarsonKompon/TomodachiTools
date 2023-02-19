@@ -38,6 +38,7 @@ class Bclyt(LayoutBase):
     rootGroup = None
 
     def __init__(self, filepath: str = None):
+        super().__init__()
         self.type = 'Layout'
         if filepath is not None:
             self.parse(filepath)

@@ -59,6 +59,7 @@ class Txt1(Pan1):
     string: str = None
 
     def __init__(self, data: DataStream = None):
+        super().__init__(data)
         self.type = "Text Box"
         if data is not None:
             self.read(data)

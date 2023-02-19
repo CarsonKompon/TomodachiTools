@@ -31,6 +31,7 @@ class Grp1(LayoutBase):
     entries: list[str] = None
 
     def __init__(self, data: DataStream = None):
+        super().__init__()
         self.type = "Group"
         if data is not None:
             self.read(data)
