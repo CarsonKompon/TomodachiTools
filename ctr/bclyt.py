@@ -101,7 +101,7 @@ class Bclyt(LayoutBase):
             self.children = []
 
             # Loop through each section
-            for _ in range(self.sectionCount):
+            for i in range(self.sectionCount-1):
                 # Read the next 4 bytes to get the magic
                 magic = data.read_string(4)
                 match magic:
@@ -203,16 +203,14 @@ class Bclyt(LayoutBase):
                         if groupPrevious is not None:
                             groupParent = groupPrevious
 
-                        data.read_uint32() # Unknown?
+                        data.read_uint32() # Padding?
                     case 'gre1':
                         groupPrevious = groupParent
                         groupParent = groupPrevious.parent
 
-                        data.read_uint32() # Unknown?
+                        data.read_uint32() # Padding?
                     case _:
                         print("Unknown section magic '" + str(magic) + "' at offset " + str(data.tell() - 4) + "!")
-
-            print(str(self))
 
     def export(self, outpath=None):
         """Exports the BCLYT class as a BCLYT file."""
