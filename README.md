@@ -8,8 +8,8 @@ python unpack.py <file format> <file> [<output>]
 ```
 
 # Supported formats
-File format | Import | Export
+File format | Import | Export | Export JSON | Conversion
 --- | --- | ---
-MSBP | ✅ | WIP
-CLYT | WIP | WIP
-BCLYT | WIP | WIP
+MSBP | 🟨 | WIP | WIP | N/A
+CLYT | WIP | WIP | WIP | BCLYT (WIP)
+BCLYT | 🟨 | WIP | 🟨 | CLYT (WIP)

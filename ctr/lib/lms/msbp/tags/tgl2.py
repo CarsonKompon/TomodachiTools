@@ -1,6 +1,6 @@
 from ctr.util.data_stream import DataStream
 
-from ctr.util.blockutil import block
+from ctr.util.blockutil import labelBlock
 
 
 class TGL2:
