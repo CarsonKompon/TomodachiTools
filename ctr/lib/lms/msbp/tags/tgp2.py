@@ -27,8 +27,13 @@ class TGP2:
                 index = self.data.read_uint16()
                 listItemIndexes.append(index)
             parameter = self.data.read_string_nt()
-        entries[index] = {"parameter": parameter, "type": parameterType,
-                          "listIndexes": listItemIndexes}
+        
+        if listItemIndexes == []:
+            entries[index] = {"parameter": parameter, "type": parameterType}
+        else:
+            entries[index] = {"parameter": parameter, "type": parameterType,
+                             "listItemIndexes": listItemIndexes}
+    
 
     def read(self):
         """Reads the TGP2 section from a data stream"""

@@ -18,7 +18,7 @@ class ALB1:
         except:
             return
         index = self.data.read_uint32()
-        entries[index] = {"Label": label, "Index": index}
+        entries[index] = {"Label": label}
 
     def read(self):
         """Reads the ALB1 section from a data stream"""

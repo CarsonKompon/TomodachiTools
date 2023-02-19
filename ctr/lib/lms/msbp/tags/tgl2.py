@@ -1,6 +1,6 @@
 from ctr.util.data_stream import DataStream
 
-from ctr.util.blockutil import block
+from ctr.util.blockutil import labelBlock
 
 
 class TGL2:
@@ -9,7 +9,7 @@ class TGL2:
     def __init__(self, data: DataStream = None) -> None:
         self.lists: list = {}
         self.data: DataStream = data
-        self.tag2Block: block = block(self.lists, data)
+        self.tag2Block: labelBlock = labelBlock(self.lists, data)
 
     def readLists(self, entries, index):
         entries[index] = self.data.read_string_nt()

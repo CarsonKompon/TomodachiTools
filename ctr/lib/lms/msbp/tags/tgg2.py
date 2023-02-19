@@ -23,8 +23,7 @@ class TGG2:
             tagIndexes.append(index)
         # Get the tag group name
         tagGroup = self.data.read_string_nt()
-        entries[groupIndex] = {"Group": tagGroup,
-                               "tagCount": numberOfTags, "tagIndexes": tagIndexes}
+        entries[groupIndex] = {"Group": tagGroup,  "tagIndexes": tagIndexes}
 
     def read(self):
         """Reads the TGG2 section from a data stream"""
