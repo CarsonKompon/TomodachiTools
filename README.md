@@ -6,3 +6,9 @@ Unpacking
 ```
 python unpack.py <file format> <file> [<output>]
 ```
+
+# Supported formats
+File format | Import | Export
+--- | --- | ---
+MSBP | ✅ | WIP
+CLYT | WIP | WIP
