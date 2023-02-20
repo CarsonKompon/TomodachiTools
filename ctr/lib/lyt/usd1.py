@@ -1,6 +1,7 @@
 from enum import IntEnum
 
 from ctr.util.data_stream import DataStream
+from ctr.util.write_stream import WriteStream
 from ctr.util.serialize import JsonSerialize
 
 """
@@ -39,7 +40,6 @@ class UsdDataType(IntEnum):
 class Usd1:
     """A USD1 section in a CTR file"""
 
-    entryCount: int = None
     entries: list["Usd1Entry"] = []
 
     def __init__(self, data: DataStream = None):
@@ -47,7 +47,7 @@ class Usd1:
             self.read(data)
 
     def read(self, data: DataStream) -> DataStream:
-        """Reads the TXL1 section from a data stream"""
+        """Reads the USD1 section from a data stream"""
 
         # Save the start position
         startPos = data.tell() - 4
@@ -56,12 +56,12 @@ class Usd1:
         sectionSize = data.read_uint32()
 
         # Read the next 2 bytes to get the entry count
-        self.entryCount = data.read_uint16()
+        entryCount = data.read_uint16()
         data.read_uint16() # Unknown
 
         # Read in the entries
         self.entries = []
-        for _ in range(self.entryCount):
+        for _ in range(entryCount):
             entry = Usd1Entry()
             data = entry.read(data)
             self.entries.append(entry)
@@ -71,6 +71,38 @@ class Usd1:
 
         return data
     
+    def write(self, data: WriteStream) -> WriteStream:
+        """Writes a USD section to a data stream"""
+
+        # Save the start position
+        startPos = data.tell()
+
+        # Write the signature
+        data.write_string("txl1")
+
+        # Write the section size (0 for now)
+        data.write_uint32(0)
+
+        # Write the entry count
+        data.write_uint16(len(self.entries))
+        data.write_uint16(0) # Unknown
+
+        # Write the entries
+        for entry in self.entries:
+            entry.write(data)
+        
+        # Calculate the section size
+        sectionSize = data.tell() - startPos
+
+        # Seek back to the section size and write it
+        data.seek(startPos + 4)
+        data.write_uint32(sectionSize)
+
+        # Seek to the end of the section
+        data.seek(startPos + sectionSize)
+
+        return data
+
     def __str__(self) -> str:
         j = JsonSerialize()
         j.add("entryCount", self.entryCount)
@@ -80,10 +112,7 @@ class Usd1:
 class Usd1Entry:
     """A USD1 entry in a USD1 section within a CTR"""
 
-    nameOffset: int = None
     name: str = None
-    dataOffset: int = None
-    setting: int = None
     type: UsdDataType = None
     unkown: bytes = None
 
@@ -94,22 +123,22 @@ class Usd1Entry:
             self.read(data)
 
     def read(self, data: DataStream) -> DataStream:
-        """Reads the TXL1 section from a data stream"""
+        """Reads the USD1 entry within a USD1 section from a data stream"""
 
         # Save the start position
         startPos = data.tell()
 
         # Read the first 4 bytes to get the name offset
-        self.nameOffset = data.read_uint32()
+        nameOffset = data.read_uint32()
 
         # Read a string at the name offset
-        self.name = data.read_string_nt_from(startPos + self.nameOffset)
+        self.name = data.read_string_nt_from(startPos + nameOffset)
 
         # Read the next 4 bytes to get the data offset
-        self.dataOffset = data.read_uint32()
+        dataOffset = data.read_uint32()
 
         # Read the next 2 bytes to get the setting
-        self.setting = data.read_uint16()
+        setting = data.read_uint16()
 
         # Read the next byte to get the type
         self.type = UsdDataType(data.read_uint8())
@@ -120,15 +149,68 @@ class Usd1Entry:
         # Read the value(s) based on the type
         match self.type:
             case 0:
-                self.value = data.read_string_from(startPos + self.dataOffset, self.setting)
+                self.value = data.read_string_from(startPos + dataOffset, setting)
             case 1:
                 self.value = []
-                for _ in range(self.setting):
-                    self.value.append(data.read_int32_from(startPos + self.dataOffset))
+                for _ in range(setting):
+                    self.value.append(data.read_int32_from(startPos + dataOffset))
             case 2:
                 self.value = []
-                for _ in range(self.setting):
-                    self.value.append(data.read_float_from(startPos + self.dataOffset))
+                for _ in range(setting):
+                    self.value.append(data.read_float_from(startPos + dataOffset))
+
+        return data
+
+    def write(self, data: WriteStream) -> WriteStream:
+        """Writes the USD1 entry within a USD1 section to a data stream"""
+
+        # Save the start position
+        startPos = data.tell()
+
+        # Write the name offset (0 for now)
+        data.write_uint32(0)
+
+        # Write the name
+
+        # Write the data offset (0 for now)
+        data.write_uint32(0)
+
+        # Write the setting (Length of the array or string)
+        data.write_uint16(len(self.value))
+
+        # Write the type
+        data.write_uint8(self.type.value)
+
+        # Write the unknown
+        data.write_bytes(self.unknown, 1)
+
+        # Write the value(s) based on the type
+        dataOffset = data.tell() - startPos
+        match self.type:
+            case UsdDataType.STRING:
+                data.write_string(self.value)
+            case UsdDataType.INT:
+                data.write_int32(self.value[0])
+            case UsdDataType.FLOAT:
+                data.write_float(self.value[0])
+            
+        # Write the name
+        nameOffset = data.tell() - startPos
+        data.write_string_nt(self.name)
+
+        # Calculate the section size
+        sectionSize = data.tell() - startPos
+
+        # Write the name offset
+        data.seek(startPos)
+        data.write_uint32(nameOffset)
+
+        # Write the data offset
+        data.seek(startPos + 4)
+        data.write_uint32(dataOffset)
+
+        # Seek to the end of the entry
+        data.seek(startPos + sectionSize)
 
         return data
     

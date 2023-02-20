@@ -1,4 +1,5 @@
 from ctr.util.data_stream import DataStream
+from ctr.util.write_stream import WriteStream
 from ctr.util.serialize import JsonSerialize
 
 """
@@ -31,6 +32,17 @@ class IndirectParameter:
 
         return data
     
+    def write(self, data: WriteStream) -> WriteStream:
+        """Writes the IndirectParameter section to a data stream"""
+
+        # Write the rotation as a 32-bit float
+        data.write_float(self.rotation)
+
+        # Write the scale as two 32-bit floats
+        data.write_vector2(self.scale)
+
+        return data
+
     def __str__(self) -> str:
         j = JsonSerialize()
         j.add("rotation", self.rotation)

@@ -1,4 +1,5 @@
 from ctr.util.data_stream import DataStream
+from ctr.util.write_stream import WriteStream
 from ctr.util.serialize import JsonSerialize
 
 """
@@ -31,19 +32,16 @@ class TexSRT:
         self.scale = data.read_vector2()
 
         return data
-    
-    # TODO: Implement write methods with a WriteStream class
-    # def write(self, data: DataStream) -> DataStream:
-    #     """Writes the TexMap section to a data stream"""
 
-    #     # Write each value as a 32-bit float
-    #     data.write_float(self.x)
-    #     data.write_float(self.y)
-    #     data.write_float(self.rotation)
-    #     data.write_float(self.scaleX)
-    #     data.write_float(self.scaleY)
+    def write(self, data: WriteStream) -> WriteStream:
+        """Writes the TexMap section to a data stream"""
 
-    #     return data
+        # Write each value
+        data.write_vector2(self.translation)
+        data.write_float(self.rotation)
+        data.write_vector2(self.scale)
+
+        return data
 
     def __str__(self) -> str:
         j = JsonSerialize()

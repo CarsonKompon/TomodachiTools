@@ -1,6 +1,7 @@
 from enum import IntEnum
 
 from ctr.util.data_stream import DataStream
+from ctr.util.write_stream import WriteStream
 from ctr.util.serialize import JsonSerialize
 
 """
@@ -76,6 +77,17 @@ class BlendMode:
         self.blendFactorSrc = BlendFactor(data.read_bytes(1))
         self.blendFactorDest = BlendFactor(data.read_bytes(1))
         self.logicOp = LogicOp(data.read_bytes(1))
+
+        return data
+    
+    def write(self, data: WriteStream) -> WriteStream:
+        """Writes the BlendMode section to a data stream"""
+
+        # Write each mode as a single byte
+        data.write_bytes(bytes(self.blendOp.value))
+        data.write_bytes(bytes(self.blendFactorSrc.value))
+        data.write_bytes(bytes(self.blendFactorDest.value))
+        data.write_bytes(bytes(self.logicOp.value))
 
         return data
     

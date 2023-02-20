@@ -1,6 +1,7 @@
-import json
+import os
 
 from ctr.util.data_stream import DataStream
+from ctr.util.write_stream import WriteStream
 from ctr.util.serialize import JsonSerialize
 
 from ctr.lib.lyt.layoutbase import LayoutBase
@@ -22,7 +23,6 @@ class Bclyt(LayoutBase):
     filepath: str = None
 
     byteOrderMark: str = None
-    headerLength: int = None
     revision: int = None
     fileSize: int = None
     sectionCount: int = None
@@ -38,6 +38,7 @@ class Bclyt(LayoutBase):
     rootGroup = None
 
     def __init__(self, filepath: str = None):
+        super().__init__()
         self.type = 'Layout'
         if filepath is not None:
             self.parse(filepath)
@@ -62,14 +63,14 @@ class Bclyt(LayoutBase):
             bom = data.read_bytes(2)
             if not (bom == b'\xFE\xFF' or bom == b'\xFF\xFE'):
                 raise ValueError("Input file specified has an invalid byte order mark! (Expected b'\\xFE\\xFF' or b'\\xFF\\xFE', got " + str(bom) + ")")
-            bom = 'little' if bom == b'\xFE\xFF' else 'big'
+            bom = 'little' if bom == b'\xFF\xFE' else 'big'
             self.byteOrderMark = bom
 
             # Set the byte order of the data stream
             data.byteOrder = bom
 
             # Read the next 2 bytes to get the header length
-            self.headerLength = data.read_uint16()
+            headerLength = data.read_uint16()
 
             # Read the next 4 bytes to the get the revision
             self.revision = data.read_uint32()
@@ -101,7 +102,7 @@ class Bclyt(LayoutBase):
             self.children = []
 
             # Loop through each section
-            for _ in range(self.sectionCount):
+            for i in range(self.sectionCount-1):
                 # Read the next 4 bytes to get the magic
                 magic = data.read_string(4)
                 match magic:
@@ -203,16 +204,14 @@ class Bclyt(LayoutBase):
                         if groupPrevious is not None:
                             groupParent = groupPrevious
 
-                        data.read_uint32() # Unknown?
+                        data.read_uint32() # Padding?
                     case 'gre1':
                         groupPrevious = groupParent
                         groupParent = groupPrevious.parent
 
-                        data.read_uint32() # Unknown?
+                        data.read_uint32() # Padding?
                     case _:
                         print("Unknown section magic '" + str(magic) + "' at offset " + str(data.tell() - 4) + "!")
-
-            print(str(self))
 
     def export(self, outpath=None):
         """Exports the BCLYT class as a BCLYT file."""
@@ -220,8 +219,85 @@ class Bclyt(LayoutBase):
         # Set the output path to the input path if it's not specified.
         if outpath is None:
             outpath = self.filepath
+        
+        # Delete the file if it already exists
+        if os.path.exists(outpath):
+            os.remove(outpath)
 
-        # TODO: Implement a BCLYT exporter
+        # Create a new file
+        with open(outpath, 'wb') as f:
+            data = WriteStream(f)
+
+            # Write the header:
+
+            # Write the signature
+            data.write_string('CLYT')
+
+            # Write the byte order mark
+            if self.byteOrderMark == "little":
+                data.write_bytes(bytes(0xFFFE), 2)
+            elif self.byteOrderMark == "big":
+                data.write_bytes(bytes(0xFEFF), 2)
+
+            # Write the header length (temporary)
+            data.write_uint16(0)
+
+            # Write the revision
+            data.write_uint32(self.revision)
+
+            # Write the file size (temporary)
+            data.write_uint32(0)
+
+            # Write the section count (temporary)
+            data.write_uint16(0)
+
+            # Store the header length
+            headerLength = data.tell()
+
+            # Write the layout parameters
+            data = self.layoutParams.write(data)
+
+            sectionCount = 0
+
+            # Write the texture list if it exists
+            if self.textureList is not None:
+                data = self.textureList.write(data)
+                sectionCount += 1
+            
+            # Write the font list if it exists
+            if self.fontList is not None:
+                data = self.fontList.write(data)
+                sectionCount += 1
+
+            # Write the material list if it exists
+            if self.materialList is not None:
+                data = self.materialList.write(data)
+                sectionCount += 1
+
+            # Write the root pane
+            data = self.rootPane.write(data)
+            sectionCount += 1
+
+            # Write the root group
+            data = self.rootGroup.write(data)
+            sectionCount += 1
+
+            # Store the file size
+            fileSize = data.tell()
+
+            # Write the section count
+            data.seek(headerLength + 0x8)
+            data.write_uint16(sectionCount)
+
+            # Write the file size
+            data.seek(headerLength + 0xC)
+            data.write_uint32(fileSize)
+
+            # Write the header length
+            data.seek(headerLength + 0x2)
+            data.write_uint16(headerLength)
+
+
 
 
     def convertToClyt(self) -> Clyt:
@@ -234,7 +310,6 @@ class Bclyt(LayoutBase):
 
         # Add header information
         j.add("byteOrderMark", self.byteOrderMark)
-        j.add("headerLength", self.headerLength)
         j.add("revision", self.revision)
         j.add("fileSize", self.fileSize)
         j.add("sectionCount", self.sectionCount)

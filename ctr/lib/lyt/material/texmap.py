@@ -1,6 +1,7 @@
 from enum import IntEnum
 
 from ctr.util.data_stream import DataStream
+from ctr.util.write_stream import WriteStream
 from ctr.util.serialize import JsonSerialize
 
 """
@@ -53,6 +54,18 @@ class TexMap:
 
         self.wrapModeT = WrapMode(tVal & 0x3)
         self.filterModeMag = FilterMode((tVal >> 2) & 0x3)
+
+        return data
+
+    def write(self, data: WriteStream) -> WriteStream:
+        """Writes the TexMap section to a data stream"""
+
+        # Write the texture index
+        data.write_uint16(self.textureIndex)
+
+        # Write the wrap and filter modes
+        data.write_bytes(self.wrapModeS.value | (self.filterModeMin.value << 2), 1)
+        data.write_bytes(self.wrapModeT.value | (self.filterModeMag.value << 2), 1)
 
         return data
 

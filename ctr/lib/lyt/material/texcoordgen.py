@@ -1,6 +1,7 @@
 from enum import IntEnum
 
 from ctr.util.data_stream import DataStream
+from ctr.util.write_stream import WriteStream
 from ctr.util.serialize import JsonSerialize
 
 """
@@ -32,7 +33,6 @@ class TexCoordGen:
 
     genType: TexGenType = None
     genSource: TexGenSource = None
-    padding: tuple[int, int] = None
 
     def __init__(self, data: DataStream = None):
         if data is not None:
@@ -44,7 +44,19 @@ class TexCoordGen:
         # Read in the type and source as bytes
         self.genType = TexGenType(data.read_uint8())
         self.genSource = TexGenSource(data.read_uint8())
-        self.padding = data.read_bytes(2)
+        
+        data.read_uint16() # Padding
+
+        return data
+    
+    def write(self, data: WriteStream) -> WriteStream:
+        """Writes the TexMap section to a data stream"""
+
+        # Write each value as a single byte
+        data.write_uint8(self.genType.value)
+        data.write_uint8(self.genSource.value)
+
+        data.write_uint16(0) # Padding
 
         return data
     

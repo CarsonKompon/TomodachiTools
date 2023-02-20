@@ -1,4 +1,5 @@
 from ctr.util.data_stream import DataStream
+from ctr.util.write_stream import WriteStream
 from ctr.util.serialize import JsonSerialize
 
 """
@@ -33,6 +34,20 @@ class AlphaCompare:
 
         # Read the unknown bytes
         self.unknown = data.read_bytes(0x3)
+
+        return data
+    
+    def write(self, data: WriteStream) -> WriteStream:
+        """Writes the AlphaCompare section to a data stream"""
+
+        # Write the compare mode as a byte
+        data.write_bytes(self.compareMode)
+
+        # Write the reference alpha as a 32-bit float
+        data.write_float(self.referenceAlpha)
+
+        # Write the unknown bytes
+        data.write_bytes(self.unknown, 0x3)
 
         return data
     

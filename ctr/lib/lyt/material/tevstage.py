@@ -1,4 +1,5 @@
 from ctr.util.data_stream import DataStream
+from ctr.util.write_stream import WriteStream
 from ctr.util.serialize import JsonSerialize
 
 """
@@ -31,6 +32,18 @@ class TevStage:
 
         # Read in the unknown value as a uint16
         self.unknown = data.read_uint16()
+
+        return data
+    
+    def write(self, data: WriteStream) -> WriteStream:
+        """Writes the TevStage section to a data stream"""
+
+        # Write each mode as a single byte
+        data.write_bytes(self.rgbMode)
+        data.write_bytes(self.alphaMode)
+
+        # Write the unknown value as a uint16
+        data.write_uint16(self.unknown)
 
         return data
 
