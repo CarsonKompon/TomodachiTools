@@ -21,6 +21,8 @@ class Msbp:
 
     def __init__(self, filepath: str = None):
         self.filepath = filepath
+        if filepath is not None:
+            self.parse()
 
     def __str__(self):
         j = JsonSerialize()
@@ -43,7 +45,6 @@ class Msbp:
         return j.serialize()
     
     def to_json(self, jsonFilename: str) -> None:
-        print(json.dumps(str(self), indent=4))
         with open(jsonFilename, "w+") as j:
             j.write(str(self))
 
