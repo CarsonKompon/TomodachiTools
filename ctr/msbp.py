@@ -1,3 +1,5 @@
+import json
+from ctr.util.serialize import JsonSerialize
 from ctr.util.data_stream import DataStream
 
 from ctr.lib.lms.msbp.attributes.alb1 import ALB1
@@ -19,10 +21,31 @@ class Msbp:
 
     def __init__(self, filepath: str = None):
         self.filepath = filepath
-       
-    # TODO: Make the exporter
-    def export(self, jsonFilename: str) -> None:
-        pass
+
+    def __str__(self):
+        j = JsonSerialize()
+        compiled_data = {}
+        compiled_data["header"] = {
+            "byteorderMark": self.byteOrderMark,
+            "revision": self.version,
+            "messageEncoding": self.messageEncoding,
+            "numberOfBlocks": self.numberOfBlocks,
+            "fileSize": self.fileSize
+        }
+        compiled_data["colorData"] = self.clb1.combine(self.clr1)
+        compiled_data["attributeData"] = self.alb1.combine(
+            self.ati2, self.ali2)
+        compiled_data["styleData"] = self.slb1.combine(self.syl3)
+        compiled_data["tagGroups"] = self.tgg2.combine(
+            self.tag2, self.tgp2, self.tgl2)
+        compiled_data["projectInfo"] = self.cti1.info
+        j.add(self.filepath, compiled_data)
+        return j.serialize()
+    
+    def to_json(self, jsonFilename: str) -> None:
+        print(json.dumps(str(self), indent=4))
+        with open(jsonFilename, "w+") as j:
+            j.write(str(self))
 
     def parse(self) -> None:
         with open(self.filepath, "rb") as d:
@@ -73,6 +96,8 @@ class Msbp:
             data.read_bytes(2)
 
             for _ in range(0, self.numberOfBlocks):
+                # TODO (across all block parsing): implement the following hash algorithm instead of using an index counter
+                # https://github.com/kinnay/Nintendo-File-Formats/wiki/LMS-File-Format#hash-tables
                 magic = data.read_string(4)
                 match magic:
                     case "CLR1":
