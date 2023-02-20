@@ -23,9 +23,36 @@ class TGG2:
             tagIndexes.append(index)
         # Get the tag group name
         tagGroup = self.data.read_string_nt()
-        entries[groupIndex] = {"Group": tagGroup,  "tagIndexes": tagIndexes}
+        entries[f"group{groupIndex}"] = {"Group": tagGroup,  "tagIndexes": tagIndexes}
 
     def read(self):
         """Reads the TGG2 section from a data stream"""
         self.tgg2Block.read(self.readGroups, hasExtraData=False)
         return self.data
+
+
+    def combine(self, tag2Data: TAG2, tgp2Data: TGP2, tgl2Data: TGL2):
+        tags = tag2Data.tags
+        parameters = tgp2Data.parameters
+        tagLists = tgl2Data.lists
+
+        for parameterIndex in parameters:
+            items = []
+            for tagListIndex in parameters[parameterIndex]["listItemIndexes"]:
+                items.append(tagLists[tagListIndex])
+                parameters[parameterIndex]["tagListItems"] = items
+
+                
+        for tagIndex in tags:
+            tags[tagIndex]["parameterMetaData"] = {}
+            for parameterIndex in tags[tagIndex]["parameterIndexes"]:
+                tags[tagIndex]["parameterMetaData"][parameterIndex] = parameters[parameterIndex]
+
+        # Compile all the data into one and add it the groups
+
+        for groupIndex in self.groups:
+            self.groups[f"{groupIndex}"]["tagMetaData"] = {}
+            for tagIndex in self.groups[groupIndex]["tagIndexes"]:
+                self.groups[f"{groupIndex}"]["tagMetaData"][tagIndex] = tags[f"tag{tagIndex}"]
+
+        return self.groups

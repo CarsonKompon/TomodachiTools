@@ -18,6 +18,7 @@ class CLB1:
             label = self.data.read_string(labelLength)
         except:
             return
+        
         index = self.data.read_uint32()
         entries[index] = {"Label": label, "Index": index}
 

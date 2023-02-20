@@ -24,15 +24,13 @@ class TGP2:
             numberOfListItems = self.data.read_uint16()
             for _ in range(numberOfListItems):
                 # Append them to a list, items that are not type 9 are displayed with an empty array
-                index = self.data.read_uint16()
-                listItemIndexes.append(index)
+                listIndex = self.data.read_uint16()
+                listItemIndexes.append(listIndex)
             parameter = self.data.read_string_nt()
         
-        if listItemIndexes == []:
-            entries[index] = {"parameter": parameter, "type": parameterType}
-        else:
-            entries[index] = {"parameter": parameter, "type": parameterType,
-                             "listItemIndexes": listItemIndexes}
+ 
+        entries[index] = {"name": parameter, "type": parameterType,
+                            "listItemIndexes": listItemIndexes}
     
 
     def read(self):

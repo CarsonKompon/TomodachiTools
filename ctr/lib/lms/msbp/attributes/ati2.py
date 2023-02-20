@@ -28,7 +28,7 @@ class ATI2:
             attributeCount += 1
 
             self.attributes[attributeCount] = {
-                "Type": attributeType, "List Index": listIndex, "Offset": offset}
+                "type": attributeType, "listIndex": listIndex}
 
         labelBlock.seekToEndOfSection(
             relativeStart, self.sectionSize, self.data)

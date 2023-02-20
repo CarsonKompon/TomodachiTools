@@ -2,7 +2,6 @@ from ctr.util.data_stream import DataStream
 
 from ctr.util.blockutil import labelBlock
 
-
 class CLR1:
     "A class representing a CLR1, color RGBA data block"
 
