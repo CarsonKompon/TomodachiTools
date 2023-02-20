@@ -1,4 +1,5 @@
 from ctr.util.data_stream import DataStream
+from ctr.util.write_stream import WriteStream
 from ctr.util.serialize import JsonSerialize
 
 from ctr.lib.lyt.pan1 import Pan1
@@ -101,6 +102,59 @@ class Txt1(Pan1):
             data.seek(startPos + self.textOffset)
             self.string = data.read_string(self.stringLength)
         
+        # Re-read the section size
+        data.seek(startPos + 0x4)
+        sectionSize = data.read_uint32()
+
+        # Seek to the end of the section
+        data.seek(startPos + sectionSize)
+
+        return data
+    
+    def write(self, data: WriteStream) -> WriteStream:
+        data = super().write(data)
+
+        # Get the start of the section
+        startPos = data.tell() - 0x4C
+
+        # Write unsigned 16-bit integers
+        data.write_uint16(self.bufferLength)
+        data.write_uint16(self.stringLength)
+        data.write_uint16(self.materialId)
+        data.write_uint16(self.fontNum)
+
+        # Write single bytes
+        data.write_bytes(self.anotherOrigin)
+        data.write_bytes(self.alignment)
+
+        # Write unknown bytes
+        data.write_bytes(self.unknown)
+
+        # Write unsigned 32-bit integer
+        data.write_uint32(self.textOffset)
+
+        # Write RGBA8 colors
+        data.write_color_rgba8(self.topColor)
+        data.write_color_rgba8(self.bottomColor)
+        
+        # Write 32-bit floats
+        data.write_float(self.sizeX)
+        data.write_float(self.sizeY)
+        data.write_float(self.characterSize)
+        data.write_float(self.lineSize)
+
+        # Write string
+        if self.stringLength != 0:
+            data.seek(startPos + self.textOffset)
+            data.write_string(self.string)
+
+        # Calculate Section Size
+        self.sectionSize = data.tell() - startPos
+
+        # Update the section size
+        data.seek(startPos + 0x4)
+        data.write_uint32(self.sectionSize)
+
         # Seek to the end of the section
         data.seek(startPos + self.sectionSize)
 

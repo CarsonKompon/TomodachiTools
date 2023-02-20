@@ -3,19 +3,34 @@ from io import BufferedWriter
 
 class WriteStream:
 
-    data = None
+    data: BufferedWriter = None
 
     def __init__(self, data: BufferedWriter = None, byteOrder: str = 'little'):
         self.data = data
         self.byteOrder = byteOrder
 
-    def write_bytes(self, data: bytes):
+    def write_bytes(self, data: bytes, length: int = 0):
         """Writes a number of bytes to the stream."""
-        self.data.write(data)
+        if length == 0:
+            self.data.write(data)
+        else:
+            if len(data) < length:
+                self.data.write(data + b'\x00' * (length - len(data)))
+            elif len(data) > length:
+                self.data.write(data[:length])
+            else:
+                self.data.write(data)
     
-    def write_string(self, string: str):
+    def write_string(self, string: str, lengthBytes: int = 0):
         """Writes a string to the stream."""
-        self.data.write(string.encode('utf-8'))
+        if lengthBytes > 0:
+            stringBytes = string.encode('utf-8')
+            if len(stringBytes) < lengthBytes:
+                self.data.write(stringBytes + b'\x00' * (lengthBytes - len(stringBytes)))
+            elif len(stringBytes) > lengthBytes:
+                self.data.write(stringBytes[:lengthBytes])
+        else:
+            self.data.write(string.encode('utf-8'))
     
     def write_string_nt(self, string: str):
         """Writes a null-terminated string to the stream."""
@@ -108,3 +123,11 @@ class WriteStream:
         self.write_float(value[2][1])
         self.write_float(value[3][0])
         self.write_float(value[3][1])
+    
+    def seek(self, offset: int, whence: int = 0):
+        """Seeks to a position in the stream."""
+        self.data.seek(offset, whence)
+    
+    def tell(self):
+        """Returns the current position in the stream."""
+        return self.data.tell()

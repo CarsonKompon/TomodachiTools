@@ -1,4 +1,5 @@
 from ctr.util.data_stream import DataStream
+from ctr.util.write_stream import WriteStream
 from ctr.util.serialize import JsonSerialize
 
 from ctr.lib.lyt.pan1 import Pan1
@@ -145,6 +146,65 @@ class Wnd1(Pan1):
 
         data.seek(startPos + self.sectionSize)
         
+        return data
+
+    def write(self, data: WriteStream) -> WriteStream:
+        data = super().write(data)
+
+        # Store the start pos
+        startPos = data.tell() - 0x4C
+
+        # Write the content overflow values as 32-bit floats
+        data.write_float(self.contentOverflowLeft)
+        data.write_float(self.contentOverflowRight)
+        data.write_float(self.contentOverflowTop)
+        data.write_float(self.contentOverflowBottom)
+
+        # Write the frame count and flag in as single bytes
+        data.write_uint8(self.frameCount)
+        data.write_uint8(self.flag)
+
+        # Write the padding in as a 16-bit int
+        data.write_uint16(self.padding)
+
+        # Write the window content and frame offsets as 32-bit uints
+        data.write_uint32(self.windowContentOffset)
+        data.write_uint32(self.windowFrameOffset)
+
+        # Write the vertex colors as 32-bit RGBA8 values
+        data.write_color_rgba8(self.colorTopLeft)
+        data.write_color_rgba8(self.colorTopRight)
+        data.write_color_rgba8(self.colorBottomLeft)
+        data.write_color_rgba8(self.colorBottomRight)
+        
+        # Write the material ID as a 16-bit uint
+        data.write_uint16(self.materialId)
+
+        # Write the texture coordinate count as an 8-bit uint
+        data.write_uint8(self.textureCoordCount)
+
+        data.write_bytes(1) # Padding
+
+        # Write the texture coordinates
+        for coord in self.textureCoords:
+            data.write_uv_coord_set(coord)
+
+        # Write the window frame offsets
+        for offset in self.frameOffsets:
+            data.write_uint32(offset)
+
+        # Write the window frames
+        for frame in self.frames:
+            data = frame.write(data)
+
+        # Write the section size
+        sectionSize = data.tell() - startPos
+        data.seek(startPos + 0x4)
+        data.write_uint32(sectionSize)
+
+        # Seek to the end of the section
+        data.seek(self.sectionStart + sectionSize)
+
         return data
 
     def __str__(self) -> str:

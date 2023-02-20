@@ -1,4 +1,5 @@
 from ctr.util.data_stream import DataStream
+from ctr.util.write_stream import WriteStream
 from ctr.util.serialize import JsonSerialize
 
 """
@@ -47,6 +48,51 @@ class Fnl1:
             # Add the string from the curPos + offset (Equivalent of C#'s ReadStringNTFrom)
             self.strings.append(data.read_string_nt_from(curPos + offset))
         
+        # Seek to the end of the section
+        data.seek(startPos + sectionSize)
+
+        return data
+    
+    def write(self, data: WriteStream) -> WriteStream:
+        """Writes the FNL1 section to a data stream"""
+
+        # Save the start position
+        startPos = data.tell()
+
+        # Write the signature
+        data.write_string("fnl1")
+
+        # Write the section size (Temporary value that will be overwritten later)
+        data.write_uint32(0)
+
+        # Write the font count
+        data.write_uint32(self.fontCount)
+
+        # Store section start
+        sectionStart = data.tell()
+
+        # Write the font name offsets (Temporary values that will be overwritten later)
+        for i in range(self.fontCount):
+            data.write_uint32(0)
+
+        # Write the font names
+        fontNameOffsets = []
+        for i in range(self.fontCount):
+            fontNameOffsets.append(data.tell() - sectionStart)
+            data.write_string_nt(self.strings[i])
+        
+        # Calculate the section size
+        sectionSize = data.tell() - startPos
+
+        # Write the font name offsets
+        for i in range(self.fontCount):
+            data.seek(startPos + 0xC + (i * 4))
+            data.write_uint32(fontNameOffsets[i])
+
+        # Write the section size
+        data.seek(startPos + 4)
+        data.write_uint32(sectionSize)
+
         # Seek to the end of the section
         data.seek(startPos + sectionSize)
 

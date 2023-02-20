@@ -1,4 +1,5 @@
 from ctr.util.data_stream import DataStream
+from ctr.util.write_stream import WriteStream
 from ctr.util.serialize import JsonSerialize
 
 """
@@ -44,6 +45,22 @@ class FontShadowParameter:
         self.whiteAlpha = data.read_uint8()
 
         data.read_bytes(1) # Read in padding (?)
+
+        return data
+    
+    def write(self, data: WriteStream) -> WriteStream:
+        """Writes the FontShadowParameter section to a data stream"""
+
+        # Write each value as a single byte
+        data.write_uint8(self.blackRed)
+        data.write_uint8(self.blackGreen)
+        data.write_uint8(self.blackBlue)
+        data.write_uint8(self.whiteRed)
+        data.write_uint8(self.whiteGreen)
+        data.write_uint8(self.whiteBlue)
+        data.write_uint8(self.whiteAlpha)
+
+        data.write_bytes(0, 1) # Write padding (?)
 
         return data
 
