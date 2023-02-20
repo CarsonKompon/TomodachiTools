@@ -23,6 +23,6 @@ match args[0]:
             print("Usage: python unpack.py msbp <file> [<output>]")
             exit()
         msbp = Msbp(args[1])
+        msbp.to_json(args[2])
     case _:
         print("Usage: python unpack.py <bclyt|msbp> <file> [<output>]")
-            
