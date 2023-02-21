@@ -20,5 +20,5 @@ File format | Export | Import | Conversion
 MSBF | to `.json` | from `.json` | N/A
 MSBT | to `.json` | from `.json` | N/A
 LIBNTTS Dicts | to `.dct` | from `.dct` | N/A
-bclim | to `.png` | from `.png` | `nw4ctr .tga`
+BCLIM | to `.png` | from `.png` | `custom .tga`
 BCLAN | to `.json` | from `.json` | to `.clan`
