@@ -1,4 +1,5 @@
 from ctr.util.data_stream import DataStream
+from ctr.util.write_stream import WriteStream
 from ctr.util.bit import extract_bits
 from ctr.util.serialize import JsonSerialize
 
@@ -28,15 +29,12 @@ Offset |  Size  |   Type   | Description
 class Pan1(LayoutBase):
     """A PAN1 section in a CTR file"""
 
-    sectionSize: int = None
-    flags: int = None
     isVisible: bool = None
     influencedAlpha: bool = None
     locationAdjustment: bool = None
 
     origin: int = None
     alpha: int = None
-    magFlags: int = None
     ignorePartsMagnify: bool = None
     adjustToPartsBounds: bool = None
 
@@ -60,22 +58,22 @@ class Pan1(LayoutBase):
         startPos = data.tell() - 4
 
         # Read in the section size as a 32-bit unsigned integer
-        self.sectionSize = data.read_uint32()
+        sectionSize = data.read_uint32()
 
         # Read in the flags as a single byte and determine the boolean values from it
-        self.flags = data.read_uint8()
-        self.isVisible = extract_bits(self.flags, 1, 0) == 1
-        self.influencedAlpha = extract_bits(self.flags, 1, 1) == 1
-        self.locationAdjustment = extract_bits(self.flags, 1, 2) == 1
+        flags = data.read_uint8()
+        self.isVisible = extract_bits(flags, 1, 0) == 1
+        self.influencedAlpha = extract_bits(flags, 1, 1) == 1
+        self.locationAdjustment = extract_bits(flags, 1, 2) == 1
 
-        # Read in the origin, alpha, and panemagflags as single bytes
+        # Read in the origin, alpha, and magflags as single bytes
         self.origin = data.read_uint8()
         self.alpha = data.read_uint8()
-        self.magFlags = data.read_uint8()
+        magFlags = data.read_uint8()
 
-        # Determine the boolean values from the panemagflags
-        self.ignorePartsMagnify = extract_bits(self.magFlags, 1, 0)
-        self.adjustToPartsBounds = extract_bits(self.magFlags, 1, 1)
+        # Determine the boolean values from the magflags
+        self.ignorePartsMagnify = extract_bits(magFlags, 1, 0)
+        self.adjustToPartsBounds = extract_bits(magFlags, 1, 1)
 
         # Read in the name as a string of length 0x10
         self.name = data.read_string(0x10).replace("\0", "")
@@ -90,6 +88,59 @@ class Pan1(LayoutBase):
         # Read in the height and width as 32-bit floats (In that order)
         self.height = data.read_float()
         self.width = data.read_float()
+
+        # Seek to the end of the section
+        data.seek(startPos + 0x4C)
+
+        return data
+    
+    def write(self, data: WriteStream) -> WriteStream:
+        """Writes the PAN1 section to a data stream"""
+
+        # Store the start offset of the section
+        startPos = data.tell()
+
+        # Write the signature
+        data.write_string("pan1")
+
+        # Write the section size (same every time)
+        data.write_uint32(0x4C)
+
+        # Write the flags
+        flags = 0
+        if self.isVisible:
+            flags = flags | 0b00000001
+        if self.influencedAlpha:
+            flags = flags | 0b00000010
+        if self.locationAdjustment:
+            flags = flags | 0b00000100
+        data.write_uint8(flags)
+
+        # Write the origin, alpha, and panemagflags
+        data.write_uint8(self.origin)
+        data.write_uint8(self.alpha)
+
+        # Write the magflags
+        magFlags = 0
+        if self.ignorePartsMagnify:
+            magFlags = magFlags | 0b00000001
+        if self.adjustToPartsBounds:
+            magFlags = magFlags | 0b00000010
+        data.write_uint8(magFlags)
+
+        # Write the name
+        data.write_string(self.name, 0x10)
+
+        # Write the data
+        data.write_string(self.dataString, 0x8)
+
+        # Write the position and rotation
+        data.write_vector3(self.position)
+        data.write_vector3(self.rotation)
+
+        # Write the height and width
+        data.write_float(self.height)
+        data.write_float(self.width)
 
         # Seek to the end of the section
         data.seek(startPos + 0x4C)

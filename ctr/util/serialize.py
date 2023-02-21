@@ -41,7 +41,7 @@ def format_line(key, var, wrapVarInQuotes=False):
     return f"\"{key}\": {var_to_json(var)}"
 
 def var_to_json(var):
-    if isinstance(var, dict):
+    if type(var) is dict:
         return dict_to_json(var)
     elif isinstance(var, list) or isinstance(var, tuple):
         return list_to_json(var)

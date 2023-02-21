@@ -1,4 +1,5 @@
 from ctr.util.data_stream import DataStream
+from ctr.util.write_stream import WriteStream
 from ctr.util.serialize import JsonSerialize
 
 """
@@ -47,6 +48,31 @@ class ProjectionTexGenParam:
         self.padding = data.read_bytes(3)
 
         return data
+    
+    def write(self, data: WriteStream) -> WriteStream:
+        """Writes the ProjectionTexGenParam section to a data stream"""
+
+        # Write the position and scale as vectors consiting of two 32-bit floats each
+        data.write_vector2(self.position)
+        data.write_vector2(self.scale)
+
+        # Determine the flags from the boolean values
+        flags = 0x00
+        if self.isFittingLayoutSize:
+            flags |= 0x01
+        if self.isFittingPaneSize:
+            flags |= 0x02
+        if self.isAdjustProjectionSR:
+            flags |= 0x03
+
+        # Write the flags as a byte
+        data.write_bytes(flags)
+
+        # Write the padding as 3 bytes
+        data.write_bytes(self.padding, 3)
+
+        return data
+    
 
     def __str__(self) -> str:
         j = JsonSerialize()

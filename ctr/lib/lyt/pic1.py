@@ -1,4 +1,5 @@
 from ctr.util.data_stream import DataStream
+from ctr.util.write_stream import WriteStream
 from ctr.util.serialize import JsonSerialize
 
 from ctr.lib.lyt.pan1 import Pan1
@@ -55,6 +56,7 @@ class Pic1(Pan1):
             self.read(data)
     
     def read(self, data: DataStream) -> DataStream:
+        """Reads the PIC1 section from the data stream."""
         data = super().read(data)
         
         # Get the start position
@@ -68,21 +70,58 @@ class Pic1(Pan1):
 
         # Read in the material ID and texture coordinate count as unsigned 16-bit integers
         self.materialId = data.read_uint16()
-        self.textureCoordCount = data.read_uint16()
+        textureCoordCount = data.read_uint16()
 
         # Read in the texture coordinates
         self.textureCoords = []
-        for _ in range(self.textureCoordCount):
+        for _ in range(textureCoordCount):
             coord = []
             for _ in range(4):
                 coord.append(data.read_vector2())
             self.textureCoords.append(coord)
         
+        # Re-read the section size
+        data.seek(startPos + 0x04)
+        sectionSize = data.read_uint32()
+
         # Seek to the end of the section
-        data.seek(startPos + self.sectionSize)
+        data.seek(startPos + sectionSize)
 
         # Return the data stream
         return data
+    
+    def write(self, data: WriteStream) -> WriteStream:
+        """Writes the PIC1 section to the data stream."""
+        data = super().write(data)
+
+        # Get the start position
+        startPos = data.tell() - 0x4C
+
+        # Write the vertex colors
+        data.write_color_rgba8(self.vertexColorTopLeft)
+        data.write_color_rgba8(self.vertexColorTopRight)
+        data.write_color_rgba8(self.vertexColorBottomLeft)
+        data.write_color_rgba8(self.vertexColorBottomRight)
+        
+        # Write the material ID and texture coordinate count as unsigned 16-bit integers
+        data.write_uint16(self.materialId)
+        data.write_uint16(len(self.textureCoords))
+
+        # Write the texture coordinates
+        for coord in self.textureCoords:
+            for c in coord:
+                data.write_vector2(c)
+        
+        # Overwrite the section size
+        sectionSize = data.tell() - startPos
+        data.seek(startPos + 0x04)
+        data.write_uint32(sectionSize)
+
+        # Seek to the end of the section
+        data.seek(startPos + sectionSize)
+
+        return data
+
 
     def __str__(self) -> str:
         j = JsonSerialize(super().__str__())
