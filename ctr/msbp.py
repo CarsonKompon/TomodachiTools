@@ -26,22 +26,19 @@ class Msbp:
 
     def __str__(self):
         j = JsonSerialize()
-        compiled_data = {}
-        compiled_data["header"] = {
+        j.add("header", {
             "byteorderMark": self.byteOrderMark,
             "revision": self.version,
             "messageEncoding": self.messageEncoding,
             "numberOfBlocks": self.numberOfBlocks,
             "fileSize": self.fileSize
-        }
-        compiled_data["colorData"] = self.clb1.combine(self.clr1)
-        compiled_data["attributeData"] = self.alb1.combine(
-            self.ati2, self.ali2)
-        compiled_data["styleData"] = self.slb1.combine(self.syl3)
-        compiled_data["tagGroups"] = self.tgg2.combine(
-            self.tag2, self.tgp2, self.tgl2)
-        compiled_data["projectInfo"] = self.cti1.info
-        j.add(self.filepath, compiled_data)
+        })
+        j.add("colorData", self.clb1.combine(self.clr1))
+        j.add("attributeData", self.alb1.combine(self.ati2, self.ali2))
+        j.add("styleData", self.slb1.combine(self.syl3))
+        j.add("tagData", self.tgg2.combine(
+            self.tag2, self.tgp2, self.tgl2))
+        j.add("sourceProjectInfo", self.cti1.info)
         return j.serialize()
 
     def to_json(self, jsonFilename: str) -> None:
