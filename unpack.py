@@ -20,7 +20,7 @@ match args[0]:
         bclyt = Bclyt(args[1])
     case "msbp":
         if len(args) < 2:
-            print("Usage: python unpack.py msbp <file.msb> [<output.json>]")
+            print("Usage: python unpack.py msbp <file.msbp> [<output.json>]")
             exit()
         msbp = Msbp(args[1])
         msbp.to_json(args[2])
