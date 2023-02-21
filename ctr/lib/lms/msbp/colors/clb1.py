@@ -1,38 +1,51 @@
-from ctr.util.data_stream import DataStream
-from ctr.util.blockutil import labelBlock
-
-from ctr.lib.lms.msbp.colors.clr1 import CLR1
+from util.data_stream import DataStream
 
 
 class CLB1:
-    "A class representing the color labels block in a MSBP files"
+    "A class repersenting the color labels block in a MSBP files"
 
     def __init__(self, data: DataStream = None) -> None:
-        self.entries: dict = {}
-        self.data: DataStream = data
-        self.clb1Block: labelBlock = labelBlock(self.entries, data)
+        self.entries = {}
+        if data is not None:
+            self.read(data)
 
-    def readLabelData(self, entries, index):
-        labelLength = self.data.read_uint8()
-        try:
-            label = self.data.read_string(labelLength)
-        except:
-            return
-        
-        index = self.data.read_uint32()
-        entries[index] = {"Label": label, "Index": index}
-
-    def read(self):
+    def read(self, data: DataStream):
         """Reads the CLB1 section from a data stream"""
-        self.clb1Block.read(self.readLabelData, overSeeking=True)
-        # Seek to the end of the section
-        return self.data
+        self.sectionSize = data.read_int32()
 
-    def combine(self, clr1Data: CLR1) -> dict:
-        """Combines label and color data into one dict"""
-        for i, key in enumerate(self.entries):
-            self.entries[key]["Color"] = {"R": clr1Data.colors[i][0],
-                                          "G": clr1Data.colors[i][1],
-                                          "B": clr1Data.colors[i][2],
-                                          "A": clr1Data.colors[i][3]}
-        return self.entries
+        # Skip padding
+        data.read_bytes(8)
+
+        # Save where the offsets are relative for seeking later
+        relativeStart = data.tell()
+
+        # This is always constant (0x1D) no matter if they're less colors
+        # It is unknown to why this is th case
+        self.numberOfHashEntries = data.read_int32()
+
+        hashOffsets = []
+        data.read_bytes(4)
+
+        for _ in range(self.numberOfHashEntries):
+            hashOffsets.append(data.read_uint32())
+            data.read_bytes(4)
+
+        for offset in hashOffsets:
+            data.seek(relativeStart)
+            # The last offset often leads to the ATI2 block when it is not supposed to (unknown why)
+            # Subtracitng the by 9 will give us the offset as usual
+            offset = offset if hashOffsets.index(
+                offset) != len(hashOffsets) - 1 else offset - 9
+
+            data.seek(offset, 1)
+            labelLength = data.read_uint8()
+            label = data.read_string(labelLength)
+            colorIndex = data.read_uint8()
+
+            self.entries[colorIndex] = label
+
+         # Seek to the end of the section
+        data.seek(464)
+        return data
+
+       
