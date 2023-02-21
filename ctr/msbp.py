@@ -43,10 +43,11 @@ class Msbp:
         compiled_data["projectInfo"] = self.cti1.info
         j.add(self.filepath, compiled_data)
         return j.serialize()
-    
+
     def to_json(self, jsonFilename: str) -> None:
         with open(jsonFilename, "w+") as j:
-            j.write(str(self))
+            j.write(json.dumps(json.loads(str(self)), indent=2))
+            print(f"Done!")
 
     def parse(self) -> None:
         with open(self.filepath, "rb") as d:
@@ -85,18 +86,16 @@ class Msbp:
                 raise ValueError(
                     f"Version number is unsupported! Expected 3, got {self.version}")
 
-            self.numberOfBlocks = data.read_uint16() + 2
+            self.numberOfBlocks = data.read_uint32()
 
             # Skip zeros
-            data.read_bytes(2)
 
             # Filesize
             self.fileSize = data.read_uint32()
 
             # Skip to the start of the MSBP data
-            data.read_bytes(2)
-
-            for _ in range(0, self.numberOfBlocks):
+            data.read_bytes(10)
+            for _ in range(self.numberOfBlocks):
                 # TODO (across all block parsing): implement the following hash algorithm instead of using an index counter
                 # https://github.com/kinnay/Nintendo-File-Formats/wiki/LMS-File-Format#hash-tables
                 magic = data.read_string(4)
