@@ -18,6 +18,8 @@ match args[0]:
             print("Usage: python unpack.py bclyt <file> [<output>]")
             exit()
         bclyt = Bclyt(args[1])
+        with open(args[2], "w") as f:
+            f.write(str(bclyt))
     case "msbp":
         if len(args) < 2:
             print("Usage: python unpack.py msbp <file> [<output>]")
