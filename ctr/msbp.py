@@ -1,3 +1,5 @@
+import json
+from ctr.util.serialize import JsonSerialize
 from ctr.util.data_stream import DataStream
 
 from ctr.lib.lms.msbp.attributes.alb1 import ALB1
@@ -19,10 +21,30 @@ class Msbp:
 
     def __init__(self, filepath: str = None):
         self.filepath = filepath
-       
-    # TODO: Make the exporter
-    def export(self, jsonFilename: str) -> None:
-        pass
+        if filepath is not None:
+            self.parse()
+
+    def __str__(self):
+        j = JsonSerialize()
+        j.add("header", {
+            "byteorderMark": self.byteOrderMark,
+            "revision": self.version,
+            "messageEncoding": self.messageEncoding,
+            "numberOfBlocks": self.numberOfBlocks,
+            "fileSize": self.fileSize
+        })
+        j.add("colorData", self.clb1.combine(self.clr1))
+        j.add("attributeData", self.alb1.combine(self.ati2, self.ali2))
+        j.add("styleData", self.slb1.combine(self.syl3))
+        j.add("tagData", self.tgg2.combine(
+            self.tag2, self.tgp2, self.tgl2))
+        j.add("sourceProjectInfo", self.cti1.info)
+        return j.serialize()
+
+    def to_json(self, jsonFilename: str) -> None:
+        with open(jsonFilename, "w+") as j:
+            j.write(json.dumps(json.loads(str(self)), indent=2))
+            print(f"Done!")
 
     def parse(self) -> None:
         with open(self.filepath, "rb") as d:
@@ -61,18 +83,18 @@ class Msbp:
                 raise ValueError(
                     f"Version number is unsupported! Expected 3, got {self.version}")
 
-            self.numberOfBlocks = data.read_uint16() + 2
+            self.numberOfBlocks = data.read_uint32()
 
             # Skip zeros
-            data.read_bytes(2)
 
             # Filesize
             self.fileSize = data.read_uint32()
 
             # Skip to the start of the MSBP data
-            data.read_bytes(2)
-
-            for _ in range(0, self.numberOfBlocks):
+            data.read_bytes(10)
+            for _ in range(self.numberOfBlocks):
+                # TODO (across all block parsing): implement the following hash algorithm instead of using an index counter
+                # https://github.com/kinnay/Nintendo-File-Formats/wiki/LMS-File-Format#hash-tables
                 magic = data.read_string(4)
                 match magic:
                     case "CLR1":

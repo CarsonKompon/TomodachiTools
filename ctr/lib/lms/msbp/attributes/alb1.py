@@ -1,26 +1,50 @@
-from ctr.util.data_stream import DataStream
-
-from ctr.util.blockutil import labelBlock
+from util.data_stream import DataStream
 
 
 class ALB1:
-    "A class representing the attribute labels block in a MSBP file"
+    "A class repersenting the color labels block in a MSBP files"
 
     def __init__(self, data: DataStream = None) -> None:
         self.entries = {}
-        self.data: DataStream = data
-        self.alb1Block: labelBlock = labelBlock(self.entries, data)
+        if data is not None:
+            self.read(data)
 
-    def readLabelData(self, entries, index):
-        labelLength = self.data.read_uint8()
-        try:
-            label = self.data.read_string(labelLength)
-        except:
-            return
-        index = self.data.read_uint32()
-        entries[index] = {"Label": label}
-
-    def read(self):
+    def read(self, data: DataStream):
         """Reads the ALB1 section from a data stream"""
-        self.entries = self.alb1Block.read(self.readLabelData)
-        return self.data
+        self.sectionSize = data.read_int32()
+
+        data.read_bytes(8)
+
+        relativeStart = data.tell()
+
+        self.numberOfHashEntries = data.read_int32()
+
+        hashOffsets = []
+        data.read_bytes(4)
+
+        for _ in range(self.numberOfHashEntries):
+            hashOffsets.append(data.read_uint32())
+            data.read_bytes(4)
+        count = 0
+        for offset in hashOffsets:
+            print(count, offset)
+            count += 1
+            data.seek(relativeStart)
+           
+            data.seek(offset, 1)
+            labelLength = data.read_uint8()
+
+            try:
+                label = data.read_string(labelLength)
+            except UnicodeDecodeError:
+                print(label)
+
+            colorIndex = data.read_uint8()
+           
+            self.entries[f"E{count}"] = label
+
+         # Seek to the end of the section
+        data.read_bytes(8)
+        return data
+
+       
