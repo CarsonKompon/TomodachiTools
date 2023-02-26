@@ -17,7 +17,7 @@ from ctr.lib.lms.msbp.project.cti1 import CTI1
 
 
 class Msbp:
-    "A class to repersent a Message Studio Binary Project file"
+    "A class that repersents a Message Studio Binary Project file"
 
     def __init__(self, filepath: str = None):
         self.filepath = filepath
