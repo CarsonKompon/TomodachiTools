@@ -12,7 +12,7 @@ args = sys.argv[1:]
 # Check if there are any arguments
 if len(args) == 0:
     fileName = __file__.split("\\")[-1]
-    print("Usage: python " + fileName + ".py <input_file> [<output_file>]")
+    print("Usage: python " + fileName + " <input_file> [<output_file>]")
     exit()
 
 # Get input and output file from args

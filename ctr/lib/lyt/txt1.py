@@ -98,9 +98,10 @@ class Txt1(Pan1):
         self.lineSize = data.read_float()
 
         # Read string
-        if self.stringLength != 0:
-            data.seek(startPos + self.textOffset)
-            self.string = data.read_string(self.stringLength)
+        # if self.stringLength != 0:
+        #     print(self.stringLength)
+        #     data.seek(startPos + self.textOffset)
+        #     self.string = data.read_string(self.stringLength)
         
         # Re-read the section size
         data.seek(startPos + 0x4)
@@ -177,4 +178,5 @@ class Txt1(Pan1):
         j.add("characterSize", self.characterSize)
         j.add("lineSize", self.lineSize)
         j.add("string", self.string)
+        j.add("userData", self.userData)
         return j.serialize()

@@ -144,7 +144,7 @@ class Wnd1(Pan1):
 
         self.materialName = self.materialList.get_material_name_from_index(self.materialId)
 
-        data.seek(startPos + self.sectionSize)
+        data.seek(startPos + self.originalSectionSize)
         
         return data
 

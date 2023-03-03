@@ -45,6 +45,8 @@ class Pan1(LayoutBase):
     width: float = None
     height: float = None
 
+    originalSectionSize: int = None
+
     def __init__(self, data: DataStream = None):
         super().__init__()
         self.type = "Panel"
@@ -58,7 +60,7 @@ class Pan1(LayoutBase):
         startPos = data.tell() - 4
 
         # Read in the section size as a 32-bit unsigned integer
-        sectionSize = data.read_uint32()
+        self.originalSectionSize = data.read_uint32()
 
         # Read in the flags as a single byte and determine the boolean values from it
         flags = data.read_uint8()

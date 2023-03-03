@@ -105,7 +105,6 @@ class Usd1:
 
     def __str__(self) -> str:
         j = JsonSerialize()
-        j.add("entryCount", self.entryCount)
         j.add("entries", self.entries)
         return j.serialize()
 
@@ -152,12 +151,14 @@ class Usd1Entry:
                 self.value = data.read_string_from(startPos + dataOffset, setting)
             case 1:
                 self.value = []
+                data.seek(startPos + dataOffset)
                 for _ in range(setting):
-                    self.value.append(data.read_int32_from(startPos + dataOffset))
+                    self.value.append(data.read_int32())
             case 2:
                 self.value = []
+                data.seek(startPos + dataOffset)
                 for _ in range(setting):
-                    self.value.append(data.read_float_from(startPos + dataOffset))
+                    self.value.append(data.read_float())
 
         return data
 
@@ -190,9 +191,11 @@ class Usd1Entry:
             case UsdDataType.STRING:
                 data.write_string(self.value)
             case UsdDataType.INT:
-                data.write_int32(self.value[0])
+                for value in self.value:
+                    data.write_int32(value)
             case UsdDataType.FLOAT:
-                data.write_float(self.value[0])
+                for value in self.value:
+                    data.write_float(value)
             
         # Write the name
         nameOffset = data.tell() - startPos
