@@ -9,7 +9,7 @@ USD1 (User Data 1?)
 ===================
 Offset |  Size  |    Type    | Description
 -------+--------+----------+------------
- 0x00  |  0x04  |   string   | Signature (txl1)
+ 0x00  |  0x04  |   string   | Signature (usd1)
  0x04  |  0x04  |   uint32   | Section Size
  0x08  |  0x02  |   uint16   | Number of Entries = N
  0x0A  |  0x02  |   uint16   | Unknown (It could also be that Number of Entries is a uint32)
@@ -130,9 +130,6 @@ class Usd1Entry:
         # Read the first 4 bytes to get the name offset
         nameOffset = data.read_uint32()
 
-        # Read a string at the name offset
-        self.name = data.read_string_nt_from(startPos + nameOffset)
-
         # Read the next 4 bytes to get the data offset
         dataOffset = data.read_uint32()
 
@@ -145,10 +142,20 @@ class Usd1Entry:
         # Read the next byte to get the unknown
         self.unknown = data.read_bytes(1)
 
+        # Read the name
+        self.name = data.read_string_nt_from(startPos + nameOffset)
+
+        datapos = data.tell()
+        data.seek(startPos + dataOffset)
+
         # Read the value(s) based on the type
         match self.type:
             case 0:
-                self.value = data.read_string_from(startPos + dataOffset, setting)
+                try:
+                    self.value = data.read_string_from(startPos + dataOffset, setting)
+                except:
+                    data.seek(startPos + dataOffset)
+                    self.value = str(data.read_bytes(setting))
             case 1:
                 self.value = []
                 data.seek(startPos + dataOffset)
@@ -160,6 +167,9 @@ class Usd1Entry:
                 for _ in range(setting):
                     self.value.append(data.read_float())
 
+        # Seek to the end of the entry
+        data.seek(datapos)
+
         return data
 
     def write(self, data: WriteStream) -> WriteStream:
@@ -170,8 +180,6 @@ class Usd1Entry:
 
         # Write the name offset (0 for now)
         data.write_uint32(0)
-
-        # Write the name
 
         # Write the data offset (0 for now)
         data.write_uint32(0)
