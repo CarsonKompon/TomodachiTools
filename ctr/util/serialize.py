@@ -107,11 +107,11 @@ class XmlSerialize:
         # Create an empty xml document with custom root name
         self.document: Element = Element(self.rootName, attributes)
 
-    def add(self, tag: str, elemText: str = None, **attributes) -> None:
+    def add(self, tag: str, elementText: str = None, **attributes) -> None:
         """Adds an element to the XML document"""
         element = SubElement(self.document, tag,
                              attributes)
-        element.text = elemText
+        element.text = elementText
 
     def insert_from_attr(self, attributeDict: dict, tag, elementText: str = None, **attributes):
         """Inserts a sub-element into an element given its attributes match"""
